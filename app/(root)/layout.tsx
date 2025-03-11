@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import '../globals.css'
 
 
 
@@ -13,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-   <main>
+   <main className="flex ">
     <h1>sidebar</h1>
     {children}
    </main>
