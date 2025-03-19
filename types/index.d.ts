@@ -17,3 +17,10 @@ declare interface DoughnutChartProps {
   accounts:string[];
 }
 
+declare interface User {
+
+  firstName: string;
+  lastName: string;
+  
+};
+
