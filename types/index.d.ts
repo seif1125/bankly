@@ -17,10 +17,40 @@ declare interface DoughnutChartProps {
   accounts:string[];
 }
 
-declare interface User {
 
+interface User {
+  // id: string;
   firstName: string;
   lastName: string;
-  
-};
+  email: string;
+}
 
+interface Transaction {
+  id: string;
+  amount: number;
+  type: "deposit" | "withdrawal";
+  date: string;
+}
+
+interface Bank {
+  id: string;
+  name: string;
+  branch: string;
+}
+
+interface Account {
+  accountNumber: string;
+  balance: number;
+} 
+interface Card {
+  cardHolder: string;
+  cardNumber: string;
+  expiryDate: string;
+}
+
+
+declare interface RightSidebarProps {
+  user: User;
+  transactions: Transaction[];
+  banks: (Bank & Account&Card)[];
+}
