@@ -47,10 +47,30 @@ interface Card {
   cardNumber: string;
   expiryDate: string;
 }
-
+interface BankCardProps {
+  bank: Bank & Account & Card;
+  index: number;
+  zIndex: number;
+}
 
 declare interface RightSidebarProps {
   user: User;
   transactions: Transaction[];
   banks: (Bank & Account&Card)[];
+}
+
+export interface AuthField<T> {
+  name: keyof T
+  label: string
+  type?: string
+  placeholder?: string
+}
+
+export interface AuthFormProps<T extends FieldValues> {
+  schema: any // optional: you can type it more strictly
+  fields: AuthField<T>[]
+  submitText: string
+  onSubmit: (values: T) => void
+  defaultValues: T
+  type: 'sign-in' | 'sign-up'
 }
