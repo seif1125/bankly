@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import '../globals.css'
 import SideBar from "@/components/SideBar";
-import { Lasso } from "lucide-react";
 import Image from "next/image";
 import MobileNavMenu from "@/components/MobileNavMenu";
 
@@ -20,6 +19,7 @@ export default function RootLayout({
   const user:User = {
     firstName: "Seif",
     lastName: "Amr",
+    email:"seifammar1125:gmail.com"
   };
 
   return (
@@ -28,11 +28,11 @@ export default function RootLayout({
     
 <div className="flex justify-between items-center p-2 md:hidden">
 <Image src="/icons/logo.svg" alt="bankly logo" width={30} height={30} />
-<MobileNavMenu  className='md:hidden'/>
+<MobileNavMenu  />
 </div>
 <div className="flex">
-  <SideBar  firstName={user.firstName} lastName={user.lastName} />
-    
+  <SideBar  firstName={user.firstName} lastName={user.lastName} email={user.email} />
+  
     {children}
 </div>
     

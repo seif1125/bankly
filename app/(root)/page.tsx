@@ -14,7 +14,7 @@ const dashboard = () => {
     type='greeting' 
     subtext='Access  , manage
      your accounts and transaction effeciently'
-     user={user?.firstname}
+     user={user?.firstName}
      />
      <TotalBalanceBox
      totalBanks={1}
