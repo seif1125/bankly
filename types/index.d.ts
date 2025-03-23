@@ -62,15 +62,17 @@ declare interface RightSidebarProps {
 export interface AuthField<T> {
   name: keyof T
   label: string
-  type?: string
-  placeholder?: string
+  type?: 'email' | 'password' | 'text' | 'date' | 'select';
+  placeholder?: string,
+  fullWidth?: boolean ,
+ 
 }
 
 export interface AuthFormProps<T extends FieldValues> {
-  schema: any // optional: you can type it more strictly
-  fields: AuthField<T>[]
-  submitText: string
-  onSubmit: (values: T) => void
-  defaultValues: T
-  type: 'sign-in' | 'sign-up'
+  schema: ZodType<T>;
+  fields: AuthField<T>[];
+  submitText: string;
+  onSubmit: (values: T) => void;
+  defaultValues: T;
+  type: 'sign-in' | 'sign-up';
 }
