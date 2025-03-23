@@ -1,6 +1,7 @@
 
 import AuthForm from '@/components/AuthForm'
 import { loginSchema } from '@/constants'
+import { AuthField } from '@/types'
 import React from 'react'
 
 
@@ -10,14 +11,18 @@ const SignInForm = () => {
     <div>
   <AuthForm 
   schema={loginSchema}
-    fields={[
-        {name:'email',label:'Email',placeholder:'Enter your email'},
-        {name:'password',label:'Password',placeholder:'Enter your password'}
-    ]}
+  fields={ [
+      { name: 'email', label: 'Email',fullWidth:false }, 
+      { name: 'password', label: 'Password' }, 
+    ] as AuthField<{ email: string; password: string }>[]
+    } 
     submitText='Sign In'
-    defaultValues={{email:'',password:''}}
+    defaultValues={{email:'',password:'',}}
     type='sign-in'
-    onSubmit={(values)=>console.log(values)}
+  onSubmit={async (values) => {
+    await new Promise((values) => setTimeout(values, 1000)); // simulate loading
+    console.log(values)
+  }}
   />
     </div>
   )
