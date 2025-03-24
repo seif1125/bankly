@@ -1,15 +1,8 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Control, FieldValues, Path } from "react-hook-form";
+import { CustomInputProps } from "@/types";
+import {  FieldValues} from "react-hook-form";
 
-interface CustomInputProps<T extends FieldValues> {
-  name: Path<T>;
-  label: string;
-  placeholder?: string;
-  type?: string;
-  control: Control<T>;
-  fullWidth?: boolean;
-}
 
 const CustomInput = <T extends FieldValues>({
   name,
@@ -28,7 +21,7 @@ const CustomInput = <T extends FieldValues>({
           <FormItem>
             <FormLabel className="form-label">{label}</FormLabel>
             <FormControl>
-              <Input className="form-item" placeholder={placeholder} type={type} {...field} />
+              <Input className="form-item" placeholder={placeholder}  {...field} type={type} />
             </FormControl>
             <FormMessage />
           </FormItem>
