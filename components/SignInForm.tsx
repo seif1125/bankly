@@ -1,6 +1,6 @@
 
 import AuthForm from '@/components/AuthForm'
-import { loginSchema } from '@/constants'
+import { loginSchema } from '@/constants/formschemas'
 import { AuthField } from '@/types'
 import React from 'react'
 
