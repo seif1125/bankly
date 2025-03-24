@@ -1,34 +1,17 @@
 'use client'
 import React from 'react'
-import { ZodType } from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, DefaultValues, FieldValues } from 'react-hook-form'
-
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { Loader2 } from "lucide-react"
-
 import CustomInput from "@/components/CustomInput"
 import CustomSelect from "@/components/CustomSelect"
 import CustomDatePicker from "@/components/CustomDatePicker"
+import CustomMobileInput from '@/components/CustomMobileInput'
+import { AuthField, AuthFormProps } from '@/types'
 
-interface AuthField<T> {
-  name: keyof T
-  label: string
-  type?: 'text' | 'email' | 'password' | 'select' | 'date'
-  placeholder?: string
-  fullWidth?: boolean
-  options?: { label: string; value: string; icon?: React.ReactNode }[]
-}
 
-interface AuthFormProps<T extends FieldValues> {
-  schema: ZodType<T>
-  fields: AuthField<T>[]
-  submitText: string
-  onSubmit: (values: T) => void
-  defaultValues: T
-  type: 'sign-in' | 'sign-up'
-}
 
 const AuthForm = <T extends FieldValues>({
   schema,
@@ -73,6 +56,15 @@ const AuthForm = <T extends FieldValues>({
                       label={f.label}
                       control={form.control}
                     />
+                  )
+                  case 'mobile':
+                  return (
+    <CustomMobileInput
+      key={f.name as string}
+      name={f.name as any}
+      label={f.label}
+      control={form.control}
+    />
                   )
                 default:
                   return (
