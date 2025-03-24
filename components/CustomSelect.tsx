@@ -1,19 +1,10 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Control, FieldValues, Path } from "react-hook-form";
+import { CustomSelectProps } from "@/types";
+import Image from "next/image";
+import {FieldValues} from "react-hook-form";
 
-interface Option {
-  label: string;
-  value: string;
-  icon?: React.ReactNode;
-}
 
-interface CustomSelectProps<T extends FieldValues> {
-  name: Path<T>;
-  label: string;
-  control: Control<T>;
-  options: Option[];
-}
 
 const CustomSelect = <T extends FieldValues>({
   name,
@@ -36,9 +27,15 @@ const CustomSelect = <T extends FieldValues>({
             </FormControl>
             <SelectContent>
               {options.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  <div className="flex items-center gap-2">
-                    {option.icon}
+                <SelectItem   key={option.value} value={option.value}>
+                  <div className="flex items-center gap-2 ">
+                  <Image
+        src={`/country-flags/${option.value}.svg`}
+        alt={`${name} flag`}
+        className="w-6 h-4 object-cover rounded-sm "
+        width={24}
+        height={16}
+      />
                     {option.label}
                   </div>
                 </SelectItem>
