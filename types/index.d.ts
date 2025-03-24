@@ -59,14 +59,15 @@ declare interface RightSidebarProps {
   banks: (Bank & Account&Card)[];
 }
 
-export interface AuthField<T> {
+interface AuthField<T> {
   name: keyof T
   label: string
-  type?: 'email' | 'password' | 'text' | 'date' | 'select';
-  placeholder?: string,
-  fullWidth?: boolean ,
- 
+  type?: 'text' | 'email' | 'password' | 'select' | 'date'|'mobile'
+  placeholder?: string
+  fullWidth?: boolean
+  options?: { label: string; value: string; icon?: React.ReactNode }[]
 }
+
 
 export interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>;
@@ -74,5 +75,40 @@ export interface AuthFormProps<T extends FieldValues> {
   submitText: string;
   onSubmit: (values: T) => void;
   defaultValues: T;
-  type: 'sign-in' | 'sign-up';
+  type?: 'email' | 'password' | 'text' | 'date' | 'select'|'mobile';
+}
+
+interface CustomInputProps<T extends FieldValues> {
+  name: Path<T>;
+  label: string;
+  placeholder?: string;
+  type?: string;
+  control: Control<T>;
+  fullWidth?: boolean;
+}
+
+
+interface Country {
+  label: string
+  value: string
+  dialCode: string
+}
+
+interface CustomMobileInputProps {
+  name: string
+  control: Control<any>
+  label: string
+}
+
+interface Option {
+  label: string;
+  value: string;
+  icon?: React.ReactNode;
+}
+
+interface CustomSelectProps<T extends FieldValues> {
+  name: Path<T>;
+  label: string;
+  control: Control<T>;
+  options: Option[];
 }
