@@ -1,7 +1,8 @@
 import React from 'react'
 import AuthForm from '@/components/AuthForm'
-import { countries, signupSchema } from '@/constants'
+import { signupSchema } from '@/constants/formschemas'
 import { AuthField } from '@/types'
+import { countries } from '@/constants/countries'
 
 
 const SignUpForm = () => {
@@ -12,13 +13,13 @@ const SignUpForm = () => {
         fields={ [
           { name: 'firstName', label: 'First Name' },
           { name: 'lastName', label: 'Last Name' },
-          { name: 'mobile', label: 'Mobile Number' },
+          { name: 'mobile', label: 'Mobile Number',type:'mobile' },
           { name: 'email', label: 'Email' },
           { name: 'country', label: 'Country' , type: 'select',
             options: countries,fullWidth:false},
           { name: 'dateOfBirth', label: 'Date of Birth',fullWidth:false, type: 'date' }, 
-          { name: 'password', label: 'Password' },
-          { name: 'confirmPassword', label: 'Confirm Password' },
+          { name: 'password', label: 'Password',type:'password' },
+          { name: 'confirmPassword', label: 'Confirm Password',type:'password' },
           
         ] as AuthField<{
           firstName: string
@@ -40,7 +41,7 @@ const SignUpForm = () => {
           email: '',
           password: '',
           confirmPassword: '',
-          dateOfBirth: ''
+          dateOfBirth: null,
         }}
         type='sign-up'
         onSubmit={async (values) => {
