@@ -12,8 +12,8 @@ const signIn = () => {
  
   return (
     
-    <section className='mx-4 md:mx-0' >
-         <header className='flex flex-col  auth-header ml-0 md:ml-40 '>
+    <section className='mx-4 md:mx-0 w-[50%] flex justify-center ' >
+         <header className='flex flex-col w-full  auth-header '>
           <AuthHeader/>
           <SignInContainer/>
           </header>
