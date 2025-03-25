@@ -112,3 +112,13 @@ interface CustomSelectProps<T extends FieldValues> {
   control: Control<T>;
   options: Option[];
 }
+
+export type SignupData = {
+  firstName: string
+  lastName: string
+  country: string
+  mobile: string
+  email: string
+  password: string
+  dateOfBirth: string
+}

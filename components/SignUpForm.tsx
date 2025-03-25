@@ -3,6 +3,7 @@ import AuthForm from '@/components/AuthForm'
 import { signupSchema } from '@/constants/formschemas'
 import { AuthField } from '@/types'
 import { countries } from '@/constants/countries'
+import { signupUser } from '@/lib/actions/signup.actions'
 
 
 const SignUpForm = () => {
@@ -45,9 +46,36 @@ const SignUpForm = () => {
         }}
         type='sign-up'
         onSubmit={async (values) => {
-          await new Promise((res) => setTimeout(res, 1000)) // simulate loading
-          console.log(values)
+          console.log("📥 Received values in onSubmit:", values);
+          const {
+            firstName,
+            lastName,
+            country,
+            mobile,
+            email,
+            password,
+            dateOfBirth,
+          } = values;
+        
+          const res = await signupUser({
+            firstName,
+            lastName,
+            country,
+            mobile,
+            email,
+            password,
+            dateOfBirth,
+          });
+        
+          if (res?.success === false) {
+            alert(`Signup failed gh: ${res.error}`);
+          } else {
+            alert("Signup successful!");
+            // Optional: redirect user
+            // router.push('/login') or homepage, etc.
+          }
         }}
+        
       />
     </div>
   )

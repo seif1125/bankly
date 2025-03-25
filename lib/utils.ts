@@ -24,4 +24,4 @@ function getCurrencyFromTimeZone(timeZone: string | undefined): string {
 
   return timeZone && currencyMap[timeZone] ? currencyMap[timeZone] : "USD"; // Default to USD
 }
-
+export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));

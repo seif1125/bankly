@@ -1,7 +1,8 @@
-// src/lib/server/appwrite.js
+
 "use server";
-import { Client, Account, Users, Databases } from "node-appwrite";
+import { Client, Account, Databases, Users } from "node-appwrite";
 import { cookies } from "next/headers";
+
 
 export async function createSessionClient() {
   const client = new Client()
@@ -32,11 +33,33 @@ export async function createAdminClient() {
     get account() {
       return new Account(client);
     },
-    get database() {
-     return new Databases(client);   
+
+    get databases(){
+      return new Databases(client)
     },
-    get users(){
-    return new Users(client)
+    get user(){
+      return new Users(client)
     }
   };
+}
+export async function getLoggedInUser() {
+  try {
+    const { account } = await createSessionClient();
+    return await account.get();
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function logoutUser(){
+  const { account } = await createSessionClient();
+  try {
+    const result = await account.deleteSession('current'); // 'current' logs out the active session
+    cookies().delete('my-custom-session')
+    console.log('User logged out:', result);
+    return result;
+  } catch (error) {
+    console.error('Logout failed:', error);
+    throw error;
+  }
 }

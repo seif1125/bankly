@@ -1,10 +1,29 @@
 'use client'
-import React, { useState }  from 'react'
+import React, { useState,useEffect }  from 'react'
 import SignInForm from './SignInForm'
 import Link from 'next/link' 
+import { getLoggedInUser, logoutUser } from '@/lib/appwrite'
+const SignInContainer =  () => {
+    
+    const [user, setUser] = useState<any>(null);
 
-const SignInContainer = () => {
-    const [user,setUser]=useState(null)
+    useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const loggedUser = await getLoggedInUser();
+          if (loggedUser) {
+            setUser(loggedUser);
+            console.log("Logged in user:", loggedUser);
+            await logoutUser();
+            
+          }
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        }
+      };
+  
+      fetchUser();
+    }, []);
   return (
     <>
 <div className=''>
