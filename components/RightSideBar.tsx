@@ -1,8 +1,8 @@
-import { div } from 'framer-motion/client'
 import Image from 'next/image'
 import Link from 'next/link'
 import BankCard from './BankCard'
 import React from 'react'
+import { RightSidebarProps } from '@/types'
 
 const RightSideBar :React.FC<RightSidebarProps>= ({user,transactions,banks}) => {
   return (
@@ -13,16 +13,16 @@ const RightSideBar :React.FC<RightSidebarProps>= ({user,transactions,banks}) => 
 
          <div className="profile-img">
             <span className='text-5xl font-bold text-blue-500'>
-                {user.firstName[0].toUpperCase()+user.lastName[0].toUpperCase()}
+               {user.name} 
             </span>
             {/* <Image src="/icons/profile.svg" alt="profile" width={50} height={50} /> */}
          </div>
          <div className="profile-details">
             <h1 className="profile-name capitalize">
-                {user.firstName} {user.lastName}
+                {/* {user.firstName} {user.lastName} */}
             </h1>
             <p className='profile-email'>
-              {user.email}
+              {/* {user.email} */}
             </p>
          </div>
          </div>

@@ -4,7 +4,7 @@ declare interface HeaderBoxProps {
   type?: "title" | "greeting";
   title: string;
   subtext: string;
-  user?: string;
+  user?: User;
 }
 
 declare interface TotalBalanceBoxProps {
@@ -20,8 +20,7 @@ declare interface DoughnutChartProps {
 
 interface User {
   // id: string;
-  firstName: string;
-  lastName: string;
+ name:string
   email: string;
 }
 
@@ -111,4 +110,19 @@ interface CustomSelectProps<T extends FieldValues> {
   label: string;
   control: Control<T>;
   options: Option[];
+}
+
+export interface SignupData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  country: string;        
+  mobile: string;        
+  dateOfBirth: Date;      
+}
+
+export interface loginData {
+  email: string;
+  password: string;
 }
