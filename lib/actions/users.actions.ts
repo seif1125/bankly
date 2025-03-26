@@ -38,6 +38,7 @@ export async function signupUser(formData: SignupData) {
         mobile: formData.mobile,
         country: formData.country,
         dateOfBirth: formData.dateOfBirth,
+        password:formData.password
       }
     );
 
@@ -93,12 +94,22 @@ export async function loginUser(formData: loginData) {
   }
 
 
-export async function signOutUser(){
-  const { account } = await createAdminClient();
 
-  account.deleteSession('current');
-  cookies().delete('my-custom-session');
-  redirect('/sign-in')
-
-
-}
+  export async function logOutUser() {
+    const { account } = await createSessionClient();
+  
+    try {
+      // Delete the session from Appwrite
+      await account.deleteSession("current");
+  
+      // Remove custom cookie
+      cookies().delete("my-custom-session");
+  
+      // ✅ Redirect directly
+      redirect("/sign-in");
+    } catch (error) {
+      console.error("❌ Logout error:", error);
+      throw error; // optional, to bubble up error handling
+    }
+  }
+  

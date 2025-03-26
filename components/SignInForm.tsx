@@ -14,7 +14,7 @@ const SignInForm = () => {
   schema={loginSchema}
   fields={ [
       { name: 'email', label: 'Email',fullWidth:false }, 
-      { name: 'password', label: 'Password' }, 
+      { name: 'password', label: 'Password',type:'password' }, 
     ] as AuthField<{ email: string; password: string }>[]
     } 
     submitText='Sign In'

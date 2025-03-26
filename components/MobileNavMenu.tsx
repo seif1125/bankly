@@ -13,16 +13,18 @@ import {
     SheetTitle,
     SheetTrigger,
   } from "@/components/ui/sheet"
+import SideBarFooter from './SideBarFooter'
+import { User } from '@/types'
   
-const MobileNavMenu = () => {
+const MobileNavMenu = ({user}:User) => {
     const pathname=usePathname();
   return (
     <section className="md:hidden "> 
-    <Sheet>
+    <Sheet >
   <SheetTrigger>
     <Image src="/icons/hamburger.svg" alt="notification bell" width={30} height={30} />
   </SheetTrigger>
-  <SheetContent side={'left'}>
+  <SheetContent className='flex flex-col justify-between md:hidden' side={'left'}>
     
   <nav>
       <SheetClose asChild>
@@ -61,7 +63,9 @@ const MobileNavMenu = () => {
         );
       })}
     </nav>
+    <SideBarFooter user={user} type='mobile' />
   </SheetContent>
+  
 </Sheet>
 
     </section>

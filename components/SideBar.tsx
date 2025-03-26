@@ -5,9 +5,12 @@ import Link from 'next/link'
 import {  cn } from '@/lib/utils'
 import React from 'react'
 import { usePathname } from 'next/navigation'
+import { getLoggedInUser } from '@/lib/actions/users.actions'
+import SideBarFooter from './SideBarFooter'
+import { User } from '@/types'
 
 
-const SideBar = ({firstName,lastName}:User) => {
+const SideBar = ({user}:User) => {
 const pathname=usePathname();
 
   return (
@@ -15,7 +18,7 @@ const pathname=usePathname();
     <nav>
       <Link href="/" className="flex items-center space-x-2 mb-12">
         <Image src="/icons/logo.svg" alt="bankly logo" width={50} height={50} />
-        <h1 className="sidebar-logo">Bankly {firstName}</h1>
+        <h1 className="sidebar-logo">Bankly </h1>
       </Link>
   
       {sidebarLinks.map((item) => {
@@ -45,6 +48,7 @@ const pathname=usePathname();
         );
       })}
     </nav>
+    <SideBarFooter user={user} type='desktop'/>
   </section>
   
   )

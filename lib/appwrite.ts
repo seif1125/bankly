@@ -41,24 +41,5 @@ export async function createAdminClient() {
     }
   };
 }
-export async function getLoggedInUser() {
-  try {
-    const { account } = await createSessionClient();
-    return await account.get();
-  } catch (error) {
-    return null;
-  }
-}
 
-export async function logoutUser(){
-  const { account } = await createSessionClient();
-  try {
-    const result = await account.deleteSession('current'); // 'current' logs out the active session
-    cookies().delete('my-custom-session')
-    console.log('User logged out:', result);
-    return result;
-  } catch (error) {
-    console.error('Logout failed:', error);
-    throw error;
-  }
-}
+

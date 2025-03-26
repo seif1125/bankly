@@ -3,6 +3,7 @@ import Link from 'next/link'
 import BankCard from './BankCard'
 import React from 'react'
 import { RightSidebarProps } from '@/types'
+import { getInitials } from '@/lib/utils'
 
 const RightSideBar :React.FC<RightSidebarProps>= ({user,transactions,banks}) => {
   return (
@@ -13,16 +14,16 @@ const RightSideBar :React.FC<RightSidebarProps>= ({user,transactions,banks}) => 
 
          <div className="profile-img">
             <span className='text-5xl font-bold text-blue-500'>
-               {user.name} 
+               {getInitials(user.name)} 
             </span>
             {/* <Image src="/icons/profile.svg" alt="profile" width={50} height={50} /> */}
          </div>
          <div className="profile-details">
             <h1 className="profile-name capitalize">
-                {/* {user.firstName} {user.lastName} */}
+                {user.name}
             </h1>
             <p className='profile-email'>
-              {/* {user.email} */}
+              {user.email}
             </p>
          </div>
          </div>

@@ -109,7 +109,7 @@ const AuthForm = <T extends FieldValues>({
             </p>
           )}
 
-          <Button className="form-btn" disabled={isSubmitting}>
+          <Button className="form-btn w-full md:w-auto" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

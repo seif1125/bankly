@@ -3,9 +3,10 @@ import HeaderBox from '@/components/HeaderBox'
 import TotalBalanceBox from '@/components/TotalBalanceBox'
 import RightSideBar from '@/components/RightSideBar'
 import { getLoggedInUser } from '@/lib/actions/users.actions'
+import { User } from '@/types'
 
 const  dashboard = async() => {
- console.log( await getLoggedInUser());
+
 const user= await getLoggedInUser()
 
   return (
@@ -14,11 +15,11 @@ const user= await getLoggedInUser()
     <div className='home-content '>
       
     <HeaderBox 
-    title='welcomee'
+    title='welcome'
     type='greeting' 
     subtext='Access  , manage
      your accounts and transaction effeciently'
-     user={user}
+     user={user as User}
      />
      <TotalBalanceBox
      totalBanks={1}
@@ -28,7 +29,7 @@ const user= await getLoggedInUser()
 
     </div>
     <RightSideBar 
-     user={user}
+     user={user as User}
       transactions={[{id:'1',amount:1234.35,type:'deposit',date:'2021-09-01'}]} 
       banks={[
         {
@@ -37,7 +38,7 @@ const user= await getLoggedInUser()
           branch: 'Lagos',
           accountNumber: '1234567890',
           balance: 1234.35,
-          cardHolder: 'John Doe',
+          cardHolder: user.name,
           cardNumber: '1234 5678 9012 3456',
           expiryDate: '12/27'
         },

@@ -13,7 +13,7 @@ const TotalBalanceBox: React.FC<TotalBalanceBoxProps> = ({ totalBanks, currentBa
             <div className='total-balance-chart'>
             <DoughnutChart accounts={accounts}/>
             </div>
-            <div className='flex flex-col gap-4'>
+            <div className='flex flex-row md:items-start md:flex-col gap-4'>
                 <h2 className='header-2'>
                     Bank Accounts: {totalBanks}
                 </h2>

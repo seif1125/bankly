@@ -27,8 +27,8 @@ const SignInContainer =  () => {
   return (
     <>
 <div className=''>
-    <h1 className='header-2'>{user?'Link Account': 'Log In' }</h1>
-    <p className='header-2 !text-xs'>{user?'Link Account': 'Enter your details to sign in'}</p>
+    <h1 className='header-2'>{ 'Log In' }</h1>
+    <p className='header-2 !text-xs'>{ 'Enter your details to sign in'}</p>
 </div>
 <SignInForm/>
 <footer className='flex justify-center items-center '>

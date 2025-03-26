@@ -25,3 +25,13 @@ function getCurrencyFromTimeZone(timeZone: string | undefined): string {
   return timeZone && currencyMap[timeZone] ? currencyMap[timeZone] : "USD"; // Default to USD
 }
 export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));
+
+export function getInitials(fullName: string): string {
+  const names = fullName?.trim().split(' ');
+  if (names?.length === 0) return '';
+
+  const firstInitial = names?names[0]?.[0] || '':'';
+  const lastInitial = names?.length > 1 ? names?names[names?.length - 1][0] : '':'';
+
+  return (firstInitial + lastInitial).toUpperCase();
+}

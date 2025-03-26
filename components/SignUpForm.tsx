@@ -3,7 +3,7 @@ import AuthForm from '@/components/AuthForm'
 import { signupSchema } from '@/constants/formschemas'
 import { AuthField } from '@/types'
 import { countries } from '@/constants/countries'
-import { signupUser } from '@/lib/actions/signup.actions'
+import { signupUser } from '@/lib/actions/users.actions'
 
 
 const SignUpForm = () => {

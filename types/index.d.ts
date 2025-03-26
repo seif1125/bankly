@@ -52,8 +52,14 @@ interface BankCardProps {
   zIndex: number;
 }
 
+
+interface SideBarFooterProps {
+  type?: 'desktop' | 'mobile';
+  user:User
+}
+
 declare interface RightSidebarProps {
-  user: User;
+  user: User ;
   transactions: Transaction[];
   banks: (Bank & Account&Card)[];
 }

@@ -110,7 +110,7 @@
   }
 
   .home-content {
-    @apply no-scrollbar flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 xl:max-h-screen xl:overflow-y-scroll px-0 xl:px-4 ;
+    @apply no-scrollbar flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 xl:max-h-screen xl:overflow-y-scroll  xl:px-4 ;
   }
 
   .home-header {
@@ -118,11 +118,11 @@
   }
 
   .total-balance {
-    @apply flex justify-around w-full items-center gap-4 rounded-xl border border-gray-200 p-4 shadow-chart sm:gap-6 sm:p-6;
+    @apply flex lg:flex-row flex-col-reverse justify-between w-full items-center gap-4 rounded-xl border border-gray-200 p-4 shadow-chart sm:gap-6 sm:p-6;
   }
 
   .total-balance-chart {
-    @apply flex size-full max-w-[100px] items-center sm:max-w-[120px];
+    @apply flex justify-center lg:justify-start size-full max-w-[100px] items-center sm:max-w-[120px];
   }
 
   .total-balance-label {
@@ -270,7 +270,7 @@
 
   /* Auth */
   .auth-asset {
-    @apply flex h-screen w-[60%] sticky top-0 items-center justify-end bg-sky-1 max-lg:hidden;
+    @apply hidden md:px-4 lg:px-0 md:flex h-screen md:w-[40%] lg:w-[60%] sticky top-0 items-center justify-end bg-sky-1 ;
   }
 
   /* Auth Form */
@@ -340,15 +340,15 @@
   }
 
   .footer_name {
-    @apply flex size-10 items-center justify-center rounded-full bg-gray-200 max-xl:hidden;
+    @apply hidden lg:flex  sm:size-10 items-center justify-center rounded-full bg-gray-200 ;
   }
 
   .footer_email {
-    @apply flex flex-1 flex-col justify-center max-xl:hidden;
+    @apply md:flex flex-1 flex-col justify-center hidden;
   }
 
   .footer_name-mobile {
-    @apply flex size-10 items-center justify-center rounded-full bg-gray-200;
+    @apply hidden size-10 items-center p-[7px] lg:p-0 sm:flex justify-center rounded-full bg-gray-200;
   }
 
   .footer_email-mobile {
@@ -356,12 +356,12 @@
   }
 
   .footer_image {
-    @apply relative size-5 max-xl:w-full max-xl:flex max-xl:justify-center max-xl:items-center;
+    @apply  relative size-5 !w-5 h-5 md:!w-[1.75rem] md:h-[1.75rem] max-xl:w-full max-xl:flex max-xl:justify-center max-xl:items-center;
   }
 
   /* Sidebar */
   .sidebar {
-    @apply sticky left-0 top-0  h-screen xl:w-[25%] flex-col  justify-between border-r border-gray-200 bg-white pt-8 text-white md:hidden sm:p-4 xl:p-6 2xl:w-[52%];
+    @apply sticky left-0 top-0 md:w-[35%]  h-screen xl:w-[25%] flex-col  justify-between border-r border-gray-200 bg-white pt-8 text-white md:hidden sm:p-4 xl:p-6 2xl:w-[52%];
   }
 
   .sidebar-logo {
