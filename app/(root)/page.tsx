@@ -2,19 +2,23 @@ import React from 'react'
 import HeaderBox from '@/components/HeaderBox'
 import TotalBalanceBox from '@/components/TotalBalanceBox'
 import RightSideBar from '@/components/RightSideBar'
-const dashboard = () => {
-  const user= {'firstName':'seif','lastName':'amr','email':'seifammar1125@gmail.com'}
+import { getLoggedInUser } from '@/lib/actions/users.actions'
+
+const  dashboard = async() => {
+ console.log( await getLoggedInUser());
+const user= await getLoggedInUser()
+
   return (
     <section className='home'> 
     
     <div className='home-content '>
       
     <HeaderBox 
-    title='welcome'
+    title='welcomee'
     type='greeting' 
     subtext='Access  , manage
      your accounts and transaction effeciently'
-     user={user?.firstName}
+     user={user}
      />
      <TotalBalanceBox
      totalBanks={1}

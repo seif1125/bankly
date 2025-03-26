@@ -1,6 +1,7 @@
 
 import AuthForm from '@/components/AuthForm'
 import { loginSchema } from '@/constants/formschemas'
+import { loginUser } from '@/lib/actions/users.actions'
 import { AuthField } from '@/types'
 import React from 'react'
 
@@ -20,9 +21,8 @@ const SignInForm = () => {
     defaultValues={{email:'',password:'',}}
     type='sign-in'
   onSubmit={async (values) => {
-    await new Promise((values) => setTimeout(values, 1000)); // simulate loading
-    console.log(values)
-  }}
+     loginUser(values)
+  }} 
   />
     </div>
   )
