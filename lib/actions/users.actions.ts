@@ -1,17 +1,18 @@
-// src/app/signup/page.ts (or wherever your server action is)
 "use server";
 
 import { ID } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation"; // ✅ Keep this, it's server-side
+import { redirect } from "next/navigation"; // ✅ Server-side redirect
 import { SignupData, loginData } from "@/types";
+import { plaidClient } from "../plaid";
+import { dwollaClient } from "../dwolla";
 
-export async function signupUser(formData: SignupData) {
+export async function signupUser(formData: any) {
   try {
     const { account, databases } = await createAdminClient();
 
-    // Create user account
+    // **Step 1: Create User in Appwrite**
     const user = await account.create(
       ID.unique(),
       formData.email,
@@ -19,41 +20,61 @@ export async function signupUser(formData: SignupData) {
       `${formData.firstName} ${formData.lastName}`
     );
 
-    // Create session
-    const session = await account.createEmailPasswordSession(
-      formData.email,
-      formData.password
-    );
+    // **Step 2: Create Dwolla Customer**
+    const dwollaRes = await dwollaClient.post('customers', {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+    });
 
-    // Save custom user profile in your Appwrite database
+    const dwollaCustomerUrl = dwollaRes.headers.get('Location') || dwollaRes.data._links?.self?.href;
+
+    // **Step 3: Generate Plaid Link Token**
+    const plaidRes = await plaidClient.linkTokenCreate({
+      user: { client_user_id: user.$id },
+      client_name: 'Bankly',
+      products: ['auth', 'transactions'],
+      country_codes: ['US'], // Modify for your country
+      language: 'en',
+    });
+
+    const plaidLinkToken = plaidRes.data?.link_token || '';
+
+    // **Step 4: Store User Data in Appwrite**
     await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID!,
       process.env.APPWRITE_USER_COLLECTION_ID!,
       ID.unique(),
       {
-        userId: user.$id,
+        id: ID.unique(),
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         mobile: formData.mobile,
+        dateOfBirth:formData.dateOfBirth,
+        password:formData.password,
         country: formData.country,
-        dateOfBirth: formData.dateOfBirth,
-        password:formData.password
+        dwollaUrl: dwollaCustomerUrl,
+        plaidLinkToken: plaidLinkToken,
       }
     );
 
-    // Set secure session cookie
-    cookies().set("my-custom-session", session.secret, {
-      path: "/",
+    // **Step 5: Set a Custom Session**
+    const session = await account.createEmailPasswordSession(
+      formData.email,
+      formData.password
+    );
+
+    cookies().set('my-custom-session', session.$id, {
+      path: '/',
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: 'strict',
       secure: true,
     });
 
-    // ✅ Use server-side redirect instead of router.push()
-    redirect("/sign-in");
+    redirect('/');
   } catch (error) {
-    console.error("❌ Signup error:", error);
+    console.error('❌ Signup error:', error);
     throw error;
   }
 }
@@ -66,7 +87,7 @@ export async function loginUser(formData: loginData) {
       formData.email,
       formData.password
     );
-
+     console.log(session);
     cookies().set("my-custom-session", session.secret, {
       path: "/",
       httpOnly: true,
@@ -81,35 +102,29 @@ export async function loginUser(formData: loginData) {
     throw error;
   }
 }
-
-
-
-  export async function getLoggedInUser() {
-    try {
-      const { account } = await createSessionClient();
-      return await account.get(); // returns User<Preferences>
-    } catch (error) {
-      return error; // instead of null
-    }
-  }
-
-
-
-  export async function logOutUser() {
+export async function getLoggedInUser() {
+  try {
     const { account } = await createSessionClient();
-  
-    try {
-      // Delete the session from Appwrite
-      await account.deleteSession("current");
-  
-      // Remove custom cookie
-      cookies().delete("my-custom-session");
-  
-      // ✅ Redirect directly
-      redirect("/sign-in");
-    } catch (error) {
-      console.error("❌ Logout error:", error);
-      throw error; // optional, to bubble up error handling
-    }
+    return await account.get(); // returns User<Preferences>
+  } catch (error) {
+    return error; // instead of null
   }
-  
+}
+
+export async function logOutUser() {
+  const { account } = await createSessionClient();
+
+  try {
+    // Delete the session from Appwrite
+    await account.deleteSession("current");
+
+    // Remove custom cookie
+    cookies().delete("my-custom-session");
+
+    // ✅ Redirect directly
+    redirect("/sign-in");
+  } catch (error) {
+    console.error("❌ Logout error:", error);
+    throw error; // optional, to bubble up error handling
+  }
+}
