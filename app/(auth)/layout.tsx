@@ -15,10 +15,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    const userJSON = await getLoggedInUser();
-    if (typeof userJSON === "object" && userJSON !== null && Object.keys(userJSON).length > 0) {
-      redirect("/");
-    }
+    // const userJSON = await getLoggedInUser();
+    // if (typeof userJSON === "object" && userJSON !== null && Object.keys(userJSON).length > 0) {
+    //   redirect("/");
+    // }
    
   return (
    <main className="flex justify-between min-h-screen w-full">

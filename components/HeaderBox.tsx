@@ -7,7 +7,7 @@ const HeaderBox = ({type='title',title,subtext,user}:HeaderBoxProps) => {
         <div className='header-box'>
      <h1 className='header-box-title'>
         {title},
-        {user&&type=='greeting' && <span className='text-bankGradient capitalize'>&nbsp;{user.name}</span>}
+        {user&&type=='greeting' && <span className='text-bankGradient capitalize'>&nbsp;{user.firstName}</span>}
       </h1>
       <p className='header-box-subtext' > {subtext}</p>
         </div>

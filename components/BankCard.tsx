@@ -11,12 +11,12 @@ const BankCard:React.FC<BankCardProps>= ({bank,index,zIndex}) => {
          <div   className="bank-card-content "
               >
                 <div className='bank-info'>  
-                 <h2>{bank.name}</h2>
-                 <h4>{getCurrencyAbbr()+' '}{bank.balance}</h4>
+                 <h2>{bank.accountName}</h2>
+                 <h4>{getCurrencyAbbr()+' '}{bank.availableBalance}</h4>
                 </div>
                 <div className=' flex flex-col self-center mt-6 text-xs text-white font-medium'>
                  <p>{bank.expiryDate}</p>
-                 <p className='uppercase'>{bank.cardHolder}</p>
+                 <p className='uppercase'>seif amr</p>
                 </div>
                 <div className='flex flex-col self-center mb-2  text-xs font-bold text-[#C0C0C0] tracking-widest drop-shadow-md ml-[60px]'>
                 <p>•••• •••• •••• {bank.cardNumber.slice(-4)}</p>
