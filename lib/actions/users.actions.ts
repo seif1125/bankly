@@ -282,13 +282,13 @@ export async function signupUser(formData: SignupData) {
     cookies().set("my-custom-session", session.secret, {
       path: "/",
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: 'strict',
       secure: true,
     });
 
     redirect("/sign-in");
   } catch (error) {
-    console.error("❌ Signup error:", error);
+    console.error('❌ Signup error:', error);
     throw error;
   }
 }
