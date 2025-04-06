@@ -3,7 +3,7 @@ import '../globals.css'
 import SideBar from "@/components/SideBar";
 import Image from "next/image";
 import MobileNavMenu from "@/components/MobileNavMenu";
-import { getLoggedInUser } from "@/lib/actions/users.actions";
+import { getLoggedInUser, getUserBankAccounts } from "@/lib/actions/users.actions";
 import { UserProvider } from "@/contexts/UserContext";
 import { User } from "@/types";
 import { parseStringify } from "@/lib/utils";
@@ -29,6 +29,7 @@ export default async function RootLayout({
     redirect("/sign-in");
   }
   const user=parseStringify(userJSON)
+
 
  
   return (

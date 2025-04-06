@@ -1,5 +1,8 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { CATEGORY_STYLES } from "@/constants/categoryStyles";
+import { CategoryStyle } from "@/constants/categoryStyles";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -91,3 +94,15 @@ export function generateFakeCard(mask:string) {
   };
 }
 
+// utils.ts
+import { HelpCircle } from "lucide-react";
+
+export function getCategoryAttributes(category: string) {
+  const normalized = category || "Uncategorized";
+  const style = CATEGORY_STYLES[normalized] || CATEGORY_STYLES["Uncategorized"];
+
+  return {
+    ...style,
+    icon: style.icon || HelpCircle,
+  };
+}

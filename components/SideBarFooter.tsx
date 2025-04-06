@@ -16,10 +16,10 @@ const SideBarFooter = ({user, type = 'desktop' }: SideBarFooterProps) => {
   return (
     <footer className='footer'>
       <div className={type === 'desktop' ? 'footer_name' : 'footer_name-mobile'}>
-        <p className='font-bold text-xl text-gray-700'>{getInitials(user.firstName)}</p>
+        <p className='font-bold text-xl text-gray-700'>{getInitials(user.firstName+' '+user.lastName)}</p>
       </div>
       <div  className={type === 'desktop' ? 'footer_email' : 'footer_email-mobile'}>
-     <h1 className='text-[14px] truncate font-semibold capitalize text-gray-600'>{user.firstName}</h1>
+     <h1 className='text-[14px] truncate font-semibold capitalize text-gray-600'>{user.firstName} {user.lastName}</h1>
      <p className='text-[14px] text-gray-600 font-normal'>{user.email}</p>
       </div>
       <div className='footer_image' onClick={handleLogout}>

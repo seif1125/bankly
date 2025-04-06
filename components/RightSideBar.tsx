@@ -14,13 +14,13 @@ const RightSideBar :React.FC<RightSidebarProps>= ({user,transactions,banks}) => 
 
          <div className="profile-img">
             <span className='text-5xl font-bold text-blue-500'>
-               {getInitials(user.name)} 
+               {getInitials(user.firstName+' '+user.lastName)} 
             </span>
             {/* <Image src="/icons/profile.svg" alt="profile" width={50} height={50} /> */}
          </div>
          <div className="profile-details">
             <h1 className="profile-name capitalize">
-                {user.name}
+                {user.firstName} {user.lastName}
             </h1>
             <p className='profile-email'>
               {user.email}

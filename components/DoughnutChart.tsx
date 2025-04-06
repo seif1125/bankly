@@ -8,15 +8,15 @@ ChartJS.register(ArcElement, Legend,Tooltip);
 
 const DoughnutChart : React.FC<DoughnutChartProps> =({accounts}) => {
   const labels=accounts.map((account) => account.accountName);
-  const accountsData=accounts.map((account)=>{account.availableBalance});
-  console.log(labels,accountsData);
+  const balances=accounts.map((account) => account.availableBalance);
+  console.log(labels,balances,accounts[0].availableBalance);
   const data = {
     labels,
     datasets: [
         
       {
         label:"Accounts",
-        data: accountsData, 
+        data:balances, 
         backgroundColor: ["#006384", "#36a2eb", "#00ceff"],
         hoverBackgroundColor: ["#004d8e", "#2b91fc", "#00afff"],
         

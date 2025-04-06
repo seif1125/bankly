@@ -60,6 +60,67 @@ console.log(response);
   }
 }
 
+export async function fetchAndLogPlaidTransactions(userId: string) {
+  console.log(userId);
+  const { databases } = await createAdminClient();
+
+  // 🧠 Get the user's saved access token from the database
+  const userDocs = await databases.listDocuments(
+    process.env.APPWRITE_DATABASE_ID!,
+    process.env.APPWRITE_USER_COLLECTION_ID!,
+    [Query.equal("id", userId)]
+  );
+
+  const userDoc = userDocs.documents[0];
+  if (!userDoc || !userDoc.plaidToken) {
+    throw new Error("User or Plaid access token not found");
+  }
+
+  const accessToken = userDoc.plaidToken;
+
+  // 📅 Define the date range (e.g., last 30 days)
+  const endDate = new Date().toISOString().split("T")[0]; // today
+  const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]; // 30 days ago
+
+  try {
+    const response = await plaidClient.transactionsGet({
+      access_token: accessToken,
+      start_date: startDate,
+      end_date: endDate,
+      options: {
+        count: 100,
+        offset: 0,
+      },
+    });
+
+    const transactions = response.data.transactions;
+
+    console.log("🧾 User Transactions:", transactions);
+    return transactions;
+  } catch (error) {
+    console.error("❌ Error fetching Plaid transactions:", error);
+    throw error;
+  }
+}
+
+export default async  function saveTransactionsToAppwrite(transactions: any[]) {
+  const { databases } = await createAdminClient();
+  for (const transaction of transactions) {
+  await databases.createDocument(
+    process.env.APPWRITE_DATABASE_ID!,
+    process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
+    ID.unique(),
+    {
+      accountId: transaction.account_id,
+      amount: transaction.amount,
+      status: transaction.status,
+      authorizedDate: transaction.authorized_date,
+      category: transaction.category,
+    }
+  )
+}
+}
+
 
 
 
@@ -139,6 +200,7 @@ export async function savePlaidTokenToUser(userId: string, token: string) {
     userDoc.$id,
     { plaidToken: token }
   );
+  await fetchAndLogPlaidTransactions(userId); // Fetch transactions after saving the token
 }
 
 
@@ -172,7 +234,7 @@ export async function fetchPlaidAccounts(accessToken: string, userId: string) {
   }
 }
 
-export async function saveBankAccountsToAppwrite(userId: string, accounts: any[]) {
+export async function saveBankAccountsToAppwrite( accounts: any[]) {
   const { databases } = await createAdminClient();
   for (const account of accounts) {
     await databases.createDocument(
@@ -193,6 +255,22 @@ export async function saveBankAccountsToAppwrite(userId: string, accounts: any[]
     );
   }
 }
+export async function fetchTransactionsFromAppwrite(accountId: string) {
+  const { databases } = await createAdminClient();
+
+
+ 
+    const transactions = await databases.listDocuments(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
+      [Query.equal("accountId", accountId)]
+    );
+   
+  
+
+  return  transactions;
+}
+
 
 
 // Handle signup process
