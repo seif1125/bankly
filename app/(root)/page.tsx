@@ -5,6 +5,7 @@ import RightSideBar from '@/components/RightSideBar'
 import { fetchAndLogPlaidTransactions, getLoggedInUser, getUserBankAccounts } from '@/lib/actions/users.actions'
 import { User } from '@/types'
 import RecentTransactions from '@/components/RecentTransactions'
+import getTotalBalance from '@/lib/utils'
 
 const  dashboard = async() => {
 
@@ -30,7 +31,7 @@ console.log(transactions);
      />
      <TotalBalanceBox 
      accounts={accounts.documents}
-     currentBalance={accounts.documents[0]?.availableBalance}
+     currentBalance={getTotalBalance(accounts.documents)}
      totalBanks={accounts.documents.length}
      />
   <RecentTransactions accounts={accounts.documents} transactions={transactions}/>

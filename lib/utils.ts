@@ -7,7 +7,14 @@ import { CategoryStyle } from "@/constants/categoryStyles";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-
+export default function getTotalBalance(accounts:Account[]):string{
+  let total=0
+  const totalBalance = accounts.reduce((total, account) => {
+    const balance = account?.availableBalance || 0; // Access the balance safely
+    return total + balance;
+  }, 0);
+  return totalBalance.toFixed(2);
+}
 export function getCurrencyAbbr(): string {
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return getCurrencyFromTimeZone(timeZone);
@@ -96,6 +103,7 @@ export function generateFakeCard(mask:string) {
 
 // utils.ts
 import { HelpCircle } from "lucide-react";
+import { Account } from "@/types";
 
 export function getCategoryAttributes(category: string) {
   const normalized = category || "Uncategorized";
