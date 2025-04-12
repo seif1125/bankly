@@ -260,13 +260,13 @@
     @apply text-16 rounded-lg border border-bankGradient bg-bank-gradient font-semibold text-white shadow-form;
   }
 
-  .plaidlink-ghost {
-    @apply flex cursor-pointer items-center justify-center gap-3 rounded-lg px-3 py-7 hover:bg-white lg:justify-start;
+  .plaidlink-rside {
+    @apply flex cursor-pointer items-center justify-center hover:!bg-transparent p-0 lg:justify-start;
   }
 
-  .plaidlink-default {
-    @apply flex !justify-start cursor-pointer gap-3 rounded-lg !bg-transparent flex-row;
-  }
+  /* .plaidlink-navbar{ 
+    @apply cursor-pointer  bg-transparent hover:!bg-transparent shadow-none  ;
+  } */
 
   /* Auth */
   .auth-asset {
@@ -369,7 +369,7 @@
   }
 
   .sidebar-link {
-    @apply flex gap-3 items-center py-1 md:p-3 2xl:p-4 rounded-lg justify-start md:mb-0 mb-4 md:justify-center xl:justify-start;
+    @apply flex gap-3 items-center p-1 md:p-3 2xl:p-4 rounded-lg justify-start md:mb-0 mb-4 md:justify-center xl:justify-start;
   }
 
   .sidebar-label {

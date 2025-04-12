@@ -10,8 +10,8 @@ const  dashboard = async() => {
 
 const user= await getLoggedInUser()
 console.log(user);
-const accounts=await getUserBankAccounts(user?.$id||'');
-console.log(accounts);
+const accounts=await getUserBankAccounts(user.id||'');
+console.log('fetched',accounts);
 const transactions=await fetchAndLogPlaidTransactions(user?.id)
 console.log(transactions);
 

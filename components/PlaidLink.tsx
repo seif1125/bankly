@@ -11,13 +11,15 @@ import {
   saveBankAccountsToAppwrite,
   fetchPlaidAccounts,
 } from '@/lib/actions/users.actions';
+import { Button } from './ui/button';
+import Image from 'next/image';
 
-const PlaidLink = () => {
+const PlaidLink = ({variant='primary'}:{variant?:'navbar'|'primary'|'rside'}) => {
   const [linkToken, setLinkToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [existingPlaidToken, setExistingPlaidToken] = useState<string | null>(null);
   const router = useRouter();
 
-  // Fetch user and token
   useEffect(() => {
     const fetchUserAndLinkToken = async () => {
       try {
@@ -26,8 +28,19 @@ const PlaidLink = () => {
 
         if (loggedInUser && loggedInUser.id) {
           setUserId(loggedInUser.id);
+
+          // Check if a plaidToken already exists
+          if (loggedInUser.plaidToken&& loggedInUser.plaidToken !== '') {
+            console.log('Plaid token already exists:', loggedInUser.plaidToken); 
+            setExistingPlaidToken(loggedInUser.plaidToken);
+          }
+
+          // Still generate link token to show Plaid interface
+          console.log('Generating Plaid link token...');
           const token = await generatePlaidLinkToken(loggedInUser.id);
+          console.log('Plaid link token:', token);
           setLinkToken(token);
+          console.log(linkToken);
         } else {
           console.error('No logged-in user found');
         }
@@ -43,20 +56,21 @@ const PlaidLink = () => {
     token: linkToken || '',
     onSuccess: async (publicToken, metadata) => {
       try {
-        const accessToken = await exchangePlaidToken(publicToken);
-
         if (!userId) throw new Error('User ID not available');
 
-        // Step 1: Save access token to user's record
-        await savePlaidTokenToUser(userId, accessToken);
+        let accessToken = existingPlaidToken;
 
-        // Step 2: Fetch Plaid accounts
-        const plaidAccounts = await fetchPlaidAccounts(accessToken,userId);
+        // Only exchange public token if no access token is saved
+        if (!existingPlaidToken) {
+         
+          accessToken = await exchangePlaidToken(publicToken,userId);
+          await savePlaidTokenToUser(userId, accessToken);
+        }
 
-        // Step 3: Save Plaid accounts to Appwrite
-        await saveBankAccountsToAppwrite(userId, plaidAccounts);
-
-        // Step 4: Redirect to dashboard
+        // Fetch and store bank accounts
+        const plaidAccounts = await fetchPlaidAccounts(userId,accessToken);
+        await saveBankAccountsToAppwrite(plaidAccounts);
+         
         router.push('/');
       } catch (error) {
         console.error('Error linking account:', error);
@@ -70,18 +84,29 @@ const PlaidLink = () => {
       }
     },
   });
-
   return (
-    <div className="flex flex-col items-center">
-      <h2 className="text-xl font-bold mb-4">Link Your Bank Account</h2>
-      <button
-        onClick={() => open()}
-        disabled={!ready || !userId}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md"
-      >
-        Connect Bank Account
-      </button>
-    </div>
+    <>
+      {variant === 'navbar' ? (
+        <Button onClick={() => open()} className=" w-full !bg-transparent shadow-none sidebar-link hover:bg-bank-gradient-hover-effect group h-[54px] !p-3">
+          <Image 
+            src="/icons/connect-bank.svg"
+            alt="connect bank"
+            width={30}
+            height={30}
+          />
+          <p className='sidebar-label'>Connect bank</p>
+        </Button>
+      ) : variant === 'rside' ? (
+        <Button onClick={() => open()} variant="ghost" className="plaidlink-rside">
+          <Image src='/icons/plus.svg' alt='add bank' width={20} height={20}/>
+          <h2 className='font-semibold text-14 text-gray-600 capitalize'>Add bank</h2>
+        </Button>
+      ) : (
+        <Button onClick={() => open()} className="plaidlink-primary">
+          Connect your bank
+        </Button>
+      )}
+    </>
   );
 };
 

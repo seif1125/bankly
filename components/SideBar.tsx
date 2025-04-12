@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation'
 import { getLoggedInUser } from '@/lib/actions/users.actions'
 import SideBarFooter from './SideBarFooter'
 import { User } from '@/types'
+import PlaidLink from './PlaidLink'
 
 
 const SideBar = ({user}:User) => {
@@ -47,6 +48,7 @@ const pathname=usePathname();
           </Link>
         );
       })}
+      <PlaidLink variant='navbar'/>
     </nav>
     <SideBarFooter user={user} type='desktop'/>
   </section>

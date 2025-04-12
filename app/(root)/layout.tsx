@@ -25,7 +25,8 @@ export default async function RootLayout({
 
 
   const userJSON = await getLoggedInUser();
-  if (typeof userJSON === "object" && userJSON !== null && Object.keys(userJSON).length === 0) {
+  console.log('sad',userJSON,typeof userJSON === "object", userJSON === null, userJSON?.$id === 0);
+  if (typeof userJSON === "object" && userJSON === null) {
     redirect("/sign-in");
   }
   const user=parseStringify(userJSON)

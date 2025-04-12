@@ -9,7 +9,7 @@ ChartJS.register(ArcElement, Legend,Tooltip);
 const DoughnutChart : React.FC<DoughnutChartProps> =({accounts}) => {
   const labels=accounts.map((account) => account.accountName);
   const balances=accounts.map((account) => account.availableBalance);
-  console.log(labels,balances,accounts[0].availableBalance);
+ 
   const data = {
     labels,
     datasets: [

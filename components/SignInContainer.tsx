@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import SignInForm from './SignInForm';
 import Link from 'next/link';
-import { getLoggedInUser, logOutUser, isUserLinkedToBankAccount } from '@/lib/actions/users.actions';
+import { getLoggedInUser, isUserLinkedToBankAccount } from '@/lib/actions/users.actions';
 import PlaidLink from './PlaidLink'; // Ensure you have this component
 
 const SignInContainer = () => {
@@ -44,16 +44,17 @@ const SignInContainer = () => {
 
       {hasBankAccount === null ? (
         <p>Loading...</p> // **Show loading state while checking**
-      ) : hasBankAccount&&user.firstName ? (
-        <>
-          <SignInForm />
-          <footer className='flex justify-center items-center '>
-            <p className='text-14 text-gray-600 font-normal'>Don't have an account? </p>
-            <Link href='/sign-up' className='text-primary form-link'>&nbsp;Sign Up</Link>
-          </footer>
-        </>
+      ) : !hasBankAccount&&user?.firstName ? (
+       <PlaidLink /> 
       ) : (
-        <PlaidLink /> // **Show Plaid Link component if no bank account**
+        <>
+        <SignInForm />
+        <footer className='flex justify-center items-center '>
+          <p className='text-14 text-gray-600 font-normal'>Don't have an account? </p>
+          <Link href='/sign-up' className='text-primary form-link'>&nbsp;Sign Up</Link>
+        </footer>
+      </>
+      // **Show Plaid Link component if no bank account**
       )}
     </>
   );

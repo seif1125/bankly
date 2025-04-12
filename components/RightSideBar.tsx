@@ -4,6 +4,7 @@ import BankCard from './BankCard'
 import React from 'react'
 import { RightSidebarProps } from '@/types'
 import { getInitials } from '@/lib/utils'
+import PlaidLink  from './PlaidLink'
 
 const RightSideBar :React.FC<RightSidebarProps>= ({user,transactions,banks}) => {
   return (
@@ -29,12 +30,9 @@ const RightSideBar :React.FC<RightSidebarProps>= ({user,transactions,banks}) => 
          </div>
 
          <div className='banks'>
-           <div className='flex  w-full justify-between'>
+           <div className='flex items-center  w-full justify-between'>
             <h2 className='header-2 capitalize'>my banks</h2>
-           <Link className='cursor-poiner flex gap-2' href='/'>
-           <Image src='/icons/plus.svg' alt='add bank' width={20} height={20}/>
-           <h2 className='font-semibold text-14 text-gray-600 capitalize'> add bank</h2>
-           </Link>
+           <PlaidLink variant='rside'/>
            </div>
            {banks.length > 0 && (
   <div className="flex relative flex-1 items-center justify-center gap-5">

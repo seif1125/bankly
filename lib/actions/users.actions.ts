@@ -9,7 +9,10 @@ import { dwollaClient } from "../dwollaConfig";
 import { plaidClient } from "../plaid";
 import { generateFakeCard } from "../utils";
 
-// Helper function to handle API responses
+
+
+
+
 function handleApiResponse(response: any, errorMessage: string) {
   if (!response) {
     throw new Error(errorMessage);
@@ -29,10 +32,7 @@ export async function generatePlaidLinkToken(userId: string) {
     });
 
     const linkToken = handleApiResponse(response.data.link_token, "❌ Error generating Plaid Link Token");
-
-    // Log the Plaid public link token to the console for debugging
     console.log("Plaid Public Link Token:", linkToken);
-
     return linkToken;
   } catch (error) {
     console.error("❌ Error generating Plaid Link Token:", error);
@@ -40,31 +40,51 @@ export async function generatePlaidLinkToken(userId: string) {
   }
 }
 
-export async function exchangePlaidToken(publicToken: string): Promise<string > {
-  if (!publicToken) throw new Error('No public token provided');
+// Exchange Plaid Token and Create Dwolla Funding Source
+export async function exchangePlaidToken(publicToken: string, userId: string): Promise<string> {
+  if (!publicToken || !userId) throw new Error("Missing token or user ID");
 
   try {
-    const response = await plaidClient.itemPublicTokenExchange({ public_token: publicToken });
-console.log(response);
-    const accessToken = response.data.access_token; // Safe check for institution_id
+    const { databases } = await createAdminClient();
+    
 
-    // If the institution_id is not found, log it but continue with null value
+
+    const userDocs = await databases.listDocuments(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_USER_COLLECTION_ID!,
+      [Query.equal("id", userId)]
+    );
+    const userDoc = userDocs.documents[0];
+    const exchange = await plaidClient.itemPublicTokenExchange({ public_token: publicToken });
+    const accessToken = exchange.data.access_token;
+
+   
+
  
+    console.log("🔐 Plaid Access Token:", accessToken);
 
-    console.log("Plaid Access Token:", accessToken);
-  
+
+      await databases.updateDocument(
+        process.env.APPWRITE_DATABASE_ID!,
+        process.env.APPWRITE_USER_COLLECTION_ID!,
+        userDoc.$id,
+        {
+          plaidToken: accessToken
+        }
+      );
+    
+
     return accessToken;
   } catch (error) {
-    console.error('❌ Error exchanging Plaid token:', error);
-    throw new Error('Failed to exchange Plaid public token');
+    console.error('❌ Error exchanging Plaid token and saving Dwolla funding source:', error);
+    throw error;
   }
 }
 
+// Fetch and Save Transactions to Appwrite
 export async function fetchAndLogPlaidTransactions(userId: string) {
-  console.log(userId);
   const { databases } = await createAdminClient();
 
-  // 🧠 Get the user's saved access token from the database
   const userDocs = await databases.listDocuments(
     process.env.APPWRITE_DATABASE_ID!,
     process.env.APPWRITE_USER_COLLECTION_ID!,
@@ -78,9 +98,8 @@ export async function fetchAndLogPlaidTransactions(userId: string) {
 
   const accessToken = userDoc.plaidToken;
 
-  // 📅 Define the date range (e.g., last 30 days)
-  const endDate = new Date().toISOString().split("T")[0]; // today
-  const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]; // 30 days ago
+  const endDate = new Date().toISOString().split("T")[0];
+  const startDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
   try {
     const response = await plaidClient.transactionsGet({
@@ -94,7 +113,6 @@ export async function fetchAndLogPlaidTransactions(userId: string) {
     });
 
     const transactions = response.data.transactions;
-
     console.log("🧾 User Transactions:", transactions);
     return transactions;
   } catch (error) {
@@ -103,24 +121,23 @@ export async function fetchAndLogPlaidTransactions(userId: string) {
   }
 }
 
-export default async  function saveTransactionsToAppwrite(transactions: any[]) {
+export async function saveTransactionsToAppwrite(transactions: any[]) {
   const { databases } = await createAdminClient();
   for (const transaction of transactions) {
-  await databases.createDocument(
-    process.env.APPWRITE_DATABASE_ID!,
-    process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
-    ID.unique(),
-    {
-      accountId: transaction.account_id,
-      amount: transaction.amount,
-      status: transaction.status,
-      authorizedDate: transaction.authorized_date,
-      category: transaction.category,
-    }
-  )
+    await databases.createDocument(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
+      ID.unique(),
+      {
+        accountId: transaction.account_id,
+        amount: transaction.amount,
+        status: transaction.status,
+        authorizedDate: transaction.authorized_date,
+        category: transaction.category,
+      }
+    );
+  }
 }
-}
-
 
 
 
@@ -135,8 +152,8 @@ async function createUserInAppwrite(formData: SignupData) {
   );
 
   const session = await account.createEmailPasswordSession(formData.email, formData.password);
-
   const dwollaResponse = await createDwollaCustomer(formData);
+  console.log("DWOLLA RESPONSE:", dwollaResponse.headers.get("location"));
   const dwollaUrl = handleApiResponse(dwollaResponse.headers.get("location"), "Failed to create Dwolla customer");
 
   // Save user data to Appwrite
@@ -175,8 +192,9 @@ async function createDwollaCustomer(formData: SignupData) {
     postalCode: "90210",
     ssn: "1234",
   };
-
-  return await dwollaClient.post("customers", requestBody);
+  console.log("DWOLLA REQ BODY:", requestBody);
+  return await dwollaClient.post("https://api-sandbox.dwolla.com/customers", requestBody);
+    
 }
 
 export async function savePlaidTokenToUser(userId: string, token: string) {
@@ -204,45 +222,71 @@ export async function savePlaidTokenToUser(userId: string, token: string) {
 }
 
 
-export async function fetchPlaidAccounts(accessToken: string, userId: string) {
+export async function fetchPlaidAccounts(userId: string, accessToken: string) {
   try {
-    const response = await plaidClient.accountsGet({ access_token: accessToken });
-    const accounts = response.data.accounts;
-  console.log("Plaid Accounts:", accounts);
+    // Step 1: Get full account details from Plaid
+    const res = await plaidClient.accountsGet({ access_token: accessToken })
+    const accounts = res.data.accounts
+//  console.log('res',accounts);
+    // Step 2: Get ACH numbers from Plaid
+    // const achRes = await plaidClient.authGet({ access_token: accessToken })
+    // const achNumbers = achRes.data.numbers.ach
+    // console.log('ACH Numbers:', achNumbers);
+    // Step 3: Enrich each account
+    const enrichedAccounts = //await Promise.all(
+      accounts.map( account => {
+        // const routingData = achNumbers.find(n => n.account_id === account.account_id)
+        // if (!routingData) return null
+        // console.log('Routing Data:', routingData);
 
-    const enrichedAccounts = accounts.map((account) => {
-      const fakeCard = generateFakeCard(account.mask||'0000'); // Simulate card details
+        // Create funding source in Dwolla
+        // const dwollaRes = await dwollaClient.post(
+        //   `https://api-sandbox.dwolla.com/funding-sources`,
+        //   {
+        //     routingNumber: routingData.routing,
+        //     accountNumber: routingData.account,
+        //     type: 'checking',
+        //     name: account.name,
+        //   },
+        //   { 'Content-Type': 'application/json' }
+        // )
+// console.log(dwollaRes);
+        // const fundingSourceUrl = dwollaRes.headers.get('location')
+        const fakeCard = generateFakeCard(account.mask || '0000')
 
-      return {
-        userId,
-        accountId: account.account_id,
-        accountName: account.name,
-        accountOfficialName: account.official_name,
-        type: account.type,
-        subtype: account.subtype,
-        availableBalance: account.balances.available,
-        cardNumber: fakeCard.cardNumber,
-        expiryDate: fakeCard.expiry,
-      };
-    });
+        return {
+          userId,
+          accountId: account.account_id,
+          accountName: account.name,
+          accountOfficialName: account.official_name,
+          type: account.type,
+          subtype: account.subtype,
+          availableBalance: account.balances.available,
+          cardNumber: fakeCard.cardNumber,
+          expiryDate: fakeCard.expiry,
+          // fundingSourceUrl,
+        }
+      })
+    
 
-    console.log("Enriched Account Sample:", enrichedAccounts[0]);
-    return enrichedAccounts;
+    // Filter out any failed accounts
+    return enrichedAccounts
   } catch (error) {
-    console.error('❌ Error fetching Plaid accounts with card info:', error);
-    throw error;
+    console.error('❌ Error in fetchPlaidAccountsWithFundingSources:', error)
+    throw error
   }
 }
 
-export async function saveBankAccountsToAppwrite( accounts: any[]) {
-  const { databases } = await createAdminClient();
+export async function saveBankAccountsToAppwrite(accounts: any[]) {
+  const { databases } = await createAdminClient()
+console.log('res',accounts);
   for (const account of accounts) {
     await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID!,
       process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
-      'unique()', // Auto-generated ID
+      ID.unique(),
       {
-        userId:account.userId,
+        userId: account.userId,
         accountId: account.accountId,
         accountName: account.accountName,
         accountOfficialName: account.accountOfficialName,
@@ -251,8 +295,9 @@ export async function saveBankAccountsToAppwrite( accounts: any[]) {
         availableBalance: account.availableBalance,
         cardNumber: account.cardNumber,
         expiryDate: account.expiryDate,
+        dwollaFundingsource: account.fundingSourceUrl||null,
       }
-    );
+    )
   }
 }
 export async function fetchTransactionsFromAppwrite(accountId: string) {
@@ -270,6 +315,7 @@ export async function fetchTransactionsFromAppwrite(accountId: string) {
 
   return  transactions;
 }
+
 
 
 
@@ -308,7 +354,7 @@ export async function loginUser(formData: loginData) {
 
     
 
-    redirect("/sign-in");
+    redirect("/");
   } catch (error) {
     console.error("❌ Login error:", error);
     throw error;
@@ -329,16 +375,6 @@ async function getUserDocument(email: string) {
   return userDoc;
 }
 
-// Update user document with Plaid token
-async function updatePlaidToken(userId: string, accessToken: string) {
-  const { databases } = await createAdminClient();
-  await databases.updateDocument(
-    process.env.APPWRITE_DATABASE_ID!,
-    process.env.APPWRITE_USER_COLLECTION_ID!,
-    userId,
-    { plaidToken: accessToken }
-  );
-}
 
 // Get the logged-in user's document
 export async function getLoggedInUser() {
