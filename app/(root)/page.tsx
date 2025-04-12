@@ -43,6 +43,7 @@ console.log(transactions);
       transactions={[{id:'1',amount:1234.35,type:'deposit',date:'2021-09-01'}]} 
       banks={accounts.documents}
       
+      
      
      />
     </section>

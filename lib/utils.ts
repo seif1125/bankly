@@ -114,3 +114,24 @@ export function getCategoryAttributes(category: string) {
     icon: style.icon || HelpCircle,
   };
 }
+
+export function formatDate(dateString: string): string { 
+
+    const date = new Date(dateString);
+    const options = {
+      weekday: 'short', // 'Wed'
+      day: '2-digit',   // '14'
+      month: 'short',   // 'Jan'
+      year: 'numeric',  // '2025'
+      hour: '2-digit',  // '14' for 2:00 PM (if time is present)
+      minute: '2-digit',// '30' for minutes (if time is present)
+      hour12: false,    // Use 24-hour format for time
+    };
+  const formattedDate= new Intl.DateTimeFormat('en-GB', options).format(date);
+  // Check if the time is present
+  if (date.getHours() === 0 && date.getMinutes() === 0) {
+    return `${formattedDate.split(',')[0]}, ${formattedDate.split(',')[1]} ${formattedDate.split(',')[2]} ${formattedDate.split(',')[3]}`;
+  } else {
+    return `${formattedDate}`;
+  }
+};

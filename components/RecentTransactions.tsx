@@ -16,22 +16,21 @@ const RecentTransactions = ({
       <div className="flex justify-between items-center">
         <h2 className="recent-transactions-label capitalize">
           recent transactions
-        </h2>
+        </h2> 
         <Link href={`/transactions`} className="view-all-btn">
           view all
-        </Link>
+        </Link> 
       </div>
 
       <Tabs
         defaultValue={accounts[0]?.accountId || "no-account"}
-        className="w-full"
+        className="w-full "
       >
-        <AccountsTabs accounts={accounts} />
-
-        {accounts.map((account) => (
+        <AccountsTabs  accounts={accounts} />
+        {accounts.map((account) =>(
           <TransactionsTable
             key={account.accountId}
-            accountId={account.accountId}
+            account={account}
             transactions={transactions}
           />
         ))}
