@@ -5,7 +5,6 @@ import Link from 'next/link'
 import {  cn } from '@/lib/utils'
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { getLoggedInUser } from '@/lib/actions/users.actions'
 import SideBarFooter from './SideBarFooter'
 import { User } from '@/types'
 import PlaidLink from './PlaidLink'
@@ -23,7 +22,7 @@ const pathname=usePathname();
       </Link>
   
       {sidebarLinks.map((item) => {
-        const isActive = pathname === item.route || pathname.startsWith(item.route);
+        const isActive = pathname === item.route 
         return (
           <Link
             href={item.route}

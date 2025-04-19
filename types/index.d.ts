@@ -18,10 +18,26 @@ declare interface DoughnutChartProps {
 }
 
 
-interface User {
-  // id: string;
- name:string
-  email: string;
+  export interface User {
+    $id: string;
+    $createdAt: string;
+    $updatedAt: string;
+    $permissions: string[];
+    $databaseId: string;
+    $collectionId: string;
+  
+    firstName: string;
+    lastName: string;
+    email: string;
+    country: string;
+    dateOfBirth: string; // ISO string (use `Date` if parsed)
+    password: string;
+    mobile: string;
+    id: string; // internal custom ID
+    dwollaUrl: string;
+    plaidToken: string;
+    defaultAccountId: string;
+  
 }
 
 interface Transaction {
@@ -38,18 +54,29 @@ interface Bank {
 }
 
 interface Account {
-  accountNumber: string;
-  balance: number;
+  $id: string;
+  accountId: string;
+  accountName: string;
+  accountOfficialName: string;
+  availableBalance: number;
+  cardNumber: string;
+  expiryDate: string;
+  type: string;
+  subtype: string;
+  banklyAddress: string;
+  dwollaFundingsource?: string;
 } 
 interface Card {
   cardHolder: string;
   cardNumber: string;
   expiryDate: string;
 }
+
 interface BankCardProps {
-  bank: Bank & Account & Card;
+  bank: Partial<Account>;
   index: number;
   zIndex: number;
+  styled?: boolean;
 }
 
 
@@ -131,4 +158,9 @@ export interface SignupData {
 export interface loginData {
   email: string;
   password: string;
+}
+interface BankCardActionsProps {
+  initialAccount: Account;
+  initialUser: User;
+  onUserUpdate: () => Promise<void>;
 }

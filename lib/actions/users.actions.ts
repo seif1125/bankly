@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { SignupData, loginData } from "@/types";
 import { dwollaClient } from "../dwollaConfig";
 import { plaidClient } from "../plaid";
-import { generateFakeCard } from "../utils";
+import { generateFakeCard ,generateBanklyAddress} from "../utils";
 
 
 
@@ -32,7 +32,6 @@ export async function generatePlaidLinkToken(userId: string) {
     });
 
     const linkToken = handleApiResponse(response.data.link_token, "❌ Error generating Plaid Link Token");
-    console.log("Plaid Public Link Token:", linkToken);
     return linkToken;
   } catch (error) {
     console.error("❌ Error generating Plaid Link Token:", error);
@@ -61,7 +60,6 @@ export async function exchangePlaidToken(publicToken: string, userId: string): P
    
 
  
-    console.log("🔐 Plaid Access Token:", accessToken);
 
 
       await databases.updateDocument(
@@ -113,7 +111,7 @@ export async function fetchAndLogPlaidTransactions(userId: string) {
     });
 
     const transactions = response.data.transactions;
-    console.log("🧾 User Transactions:", transactions);
+
     return transactions;
   } catch (error) {
     console.error("❌ Error fetching Plaid transactions:", error);
@@ -153,7 +151,6 @@ async function createUserInAppwrite(formData: SignupData) {
 
   const session = await account.createEmailPasswordSession(formData.email, formData.password);
   const dwollaResponse = await createDwollaCustomer(formData);
-  console.log("DWOLLA RESPONSE:", dwollaResponse.headers.get("location"));
   const dwollaUrl = handleApiResponse(dwollaResponse.headers.get("location"), "Failed to create Dwolla customer");
 
   // Save user data to Appwrite
@@ -192,14 +189,13 @@ async function createDwollaCustomer(formData: SignupData) {
     postalCode: "90210",
     ssn: "1234",
   };
-  console.log("DWOLLA REQ BODY:", requestBody);
+
   return await dwollaClient.post("https://api-sandbox.dwolla.com/customers", requestBody);
     
 }
 
 export async function savePlaidTokenToUser(userId: string, token: string) {
   const { databases } = await createAdminClient();
-  console.log("Saving token for userId:", userId, "AccessToken:", token);
 
   // 🔍 Fetch user document by custom userId
   const userDocs = await databases.listDocuments(
@@ -277,17 +273,18 @@ export async function fetchPlaidAccounts(userId: string, accessToken: string) {
   }
 }
 
-export async function saveBankAccountsToAppwrite(accounts: any[]) {
+export async function saveBankAccountsToAppwrite(accounts: any[],userId:string) {
   const { databases } = await createAdminClient()
-console.log('res',accounts);
+
   for (const account of accounts) {
+    console.log('id', account.userId.id,'$id', account.userId.$id,'accountId', account.$id,'acco',account,'s',userId);
     await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID!,
       process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
       ID.unique(),
       {
-        userId: account.userId,
-        accountId: account.accountId,
+        userId: userId,
+        accountId: account.accountId, 
         accountName: account.accountName,
         accountOfficialName: account.accountOfficialName,
         type: account.type,
@@ -296,6 +293,7 @@ console.log('res',accounts);
         cardNumber: account.cardNumber,
         expiryDate: account.expiryDate,
         dwollaFundingsource: account.fundingSourceUrl||null,
+        banklyAddress: generateBanklyAddress()||null,
       }
     )
   }
@@ -389,7 +387,7 @@ export async function getLoggedInUser() {
       process.env.APPWRITE_USER_COLLECTION_ID!,
       [Query.equal("id", user.$id)]
     );
-
+  console.log('sa',userDocs.documents[0]);
     return userDocs.documents[0];
   } catch (error) {
     console.error("❌ Error fetching logged-in user:", error);
@@ -431,16 +429,82 @@ export async function isUserLinkedToBankAccount(userId: string) {
 
 
 export async function getUserBankAccounts(userId: string) {
+   console.log(userId);
     const { databases } = await createAdminClient();
     const accountDocs = await databases.listDocuments(
       process.env.APPWRITE_DATABASE_ID!,
       process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
       [Query.equal("userId", userId)]
     );
-  
-   
+   console.log(accountDocs.documents);
     if (!accountDocs) throw new Error("User document not found");
-    console.log(accountDocs);
     return accountDocs;
 
 }
+export const updateUserBankAddress = async ({
+  accountId,
+  newAddress,
+}: {
+  accountId: string;
+  newAddress: string;
+}) => {
+  try {
+    console.log('sa');
+    const { databases } = await createAdminClient();
+    const updated = await databases.updateDocument(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
+      accountId,
+      { banklyAddress: newAddress }
+    );
+console.log(updated);
+    return updated;
+    
+  } catch (error) {
+    console.error('Failed to update banklyAddress:', error);
+    throw error;
+  }
+};
+
+export const deleteUserBankAccount = async (accountId: string) => {
+  try {
+    const { databases } = await createAdminClient();
+    
+    const deleted = await databases.deleteDocument(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
+      accountId
+    );
+
+    console.log('Deleted account:', accountId);
+    return deleted;
+  } catch (error) {
+    console.error('Failed to delete bank account:', error);
+    throw error;
+  }
+};
+
+export const updateUserDefaultAccount = async (
+  userId: string,
+  defaultAccountId: string
+) => {
+  try {
+    const { databases } = await createAdminClient();
+
+    const updatedUser = await databases.updateDocument(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_USER_COLLECTION_ID!, // replace with your actual users collection ID
+      userId,
+      {
+        defaultAccountId: defaultAccountId,
+      }
+    );
+
+  
+    // Redirect to the desired page after updating
+    return updatedUser;
+  } catch (error) {
+    console.error('Failed to update default account:', error);
+    throw error;
+  }
+};

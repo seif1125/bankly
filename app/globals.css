@@ -221,13 +221,17 @@
   }
 
   /* Bank Card */
-  .bank-card {
+  .bank-card-styled {
     /* @apply relative flex h-[190px] w-full max-w-[320px] justify-between rounded-[20px] border border-white bg-bank-card shadow-creditCard backdrop-blur-[6px]; */
-   @apply h-[120px] w-full bg-bank-card bg-cover bg-no-repeat absolute   translate-x-[-25%]
+    @apply h-[120px] w-full bg-bank-card bg-cover bg-no-repeat absolute translate-x-[-25%];
+
+  }
+  .bank-card {
+    @apply  rounded-xl  bg-bank-card bg-center bg-cover bg-no-repeat text-white h-[180px] overflow-hidden relative;
   }
 
   .bank-card-content {
-    @apply absolute bg-transparent  h-full w-full  z-[1000] flex flex-col items-end
+    @apply absolute bg-transparent  h-full w-full  z-[1000] flex flex-col 
   }
 
 

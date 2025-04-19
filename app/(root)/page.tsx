@@ -10,11 +10,9 @@ import getTotalBalance from '@/lib/utils'
 const  dashboard = async() => {
 
 const user= await getLoggedInUser()
-console.log(user);
-const accounts=await getUserBankAccounts(user.id||'');
-console.log('fetched',accounts);
+console.log('sdasdas',user);
+const accounts=await getUserBankAccounts(user.$id);
 const transactions=await fetchAndLogPlaidTransactions(user?.id)
-console.log(transactions);
 
 
   return (

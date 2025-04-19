@@ -14,13 +14,13 @@ const SignInContainer = () => {
       try {
       
         const loggedUser = await getLoggedInUser();
-        console.log('Logged in user:', loggedUser);
+   
         if (loggedUser) {
           setUser(loggedUser);
           
 
           // **Check if user has a linked bank account**
-          const isLinked = await isUserLinkedToBankAccount(loggedUser.id);
+          const isLinked = await isUserLinkedToBankAccount(loggedUser.$id);
           setHasBankAccount(isLinked);
 
           

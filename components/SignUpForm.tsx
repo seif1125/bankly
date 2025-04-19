@@ -46,7 +46,6 @@ const SignUpForm = () => {
         }}
         type='sign-up'
         onSubmit={async (values) => {
-          console.log("📥 Received values in onSubmit:", values);
           const {
             firstName,
             lastName,

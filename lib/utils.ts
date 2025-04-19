@@ -135,3 +135,15 @@ export function formatDate(dateString: string): string {
     return `${formattedDate}`;
   }
 };
+
+export function generateBanklyAddress(): string {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+   
+  let address = '';
+
+  for (let i = 0; i < 10; i++) {
+    address += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  return `${address}@bankly.com`;
+}

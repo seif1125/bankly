@@ -6,7 +6,7 @@ import { RightSidebarProps } from '@/types'
 import { getInitials } from '@/lib/utils'
 import PlaidLink  from './PlaidLink'
 
-const RightSideBar :React.FC<RightSidebarProps>= ({user,transactions,banks}) => {
+const RightSideBar :React.FC<RightSidebarProps>= ({user,banks}) => {
   return (
     <aside className='right-sidebar'>
       <section className='flex flex-col pb-8'>
@@ -40,6 +40,7 @@ const RightSideBar :React.FC<RightSidebarProps>= ({user,transactions,banks}) => 
       <BankCard
         bank={bank}
         key={bank.accountId}
+        styled={true}
         index={index}
         zIndex={banks.length - index} // Ensures the last card is on top
       />

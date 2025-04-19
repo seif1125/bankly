@@ -24,23 +24,22 @@ const PlaidLink = ({variant='primary'}:{variant?:'navbar'|'primary'|'rside'}) =>
     const fetchUserAndLinkToken = async () => {
       try {
         const loggedInUser = await getLoggedInUser();
-        console.log('Logged in user:', loggedInUser);
 
-        if (loggedInUser && loggedInUser.id) {
-          setUserId(loggedInUser.id);
+
+        if (loggedInUser && loggedInUser.$id) {
+          setUserId(loggedInUser.$id);
 
           // Check if a plaidToken already exists
           if (loggedInUser.plaidToken&& loggedInUser.plaidToken !== '') {
-            console.log('Plaid token already exists:', loggedInUser.plaidToken); 
             setExistingPlaidToken(loggedInUser.plaidToken);
           }
 
           // Still generate link token to show Plaid interface
-          console.log('Generating Plaid link token...');
+
           const token = await generatePlaidLinkToken(loggedInUser.id);
-          console.log('Plaid link token:', token);
+    
           setLinkToken(token);
-          console.log(linkToken);
+  
         } else {
           console.error('No logged-in user found');
         }
@@ -52,9 +51,9 @@ const PlaidLink = ({variant='primary'}:{variant?:'navbar'|'primary'|'rside'}) =>
     fetchUserAndLinkToken();
   }, []);
 
-  const { open, ready } = usePlaidLink({
+  const { open } = usePlaidLink({
     token: linkToken || '',
-    onSuccess: async (publicToken, metadata) => {
+    onSuccess: async (publicToken) => {
       try {
         if (!userId) throw new Error('User ID not available');
 
@@ -69,7 +68,8 @@ const PlaidLink = ({variant='primary'}:{variant?:'navbar'|'primary'|'rside'}) =>
 
         // Fetch and store bank accounts
         const plaidAccounts = await fetchPlaidAccounts(userId,accessToken);
-        await saveBankAccountsToAppwrite(plaidAccounts);
+        console.log('as',userId);
+        await saveBankAccountsToAppwrite(plaidAccounts,userId);
          
         router.push('/');
       } catch (error) {

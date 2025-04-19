@@ -116,6 +116,7 @@ const config = {
 			"gradient-mesh": "url('/icons/gradient-mesh.svg')",
 			'bank-card': 'url("/icons/card.svg")',
   		},
+		
   		boxShadow: {
   			form: '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
   			chart: '0px 1px 3px 0px rgba(16, 24, 40, 0.10), 0px 1px 2px 0px rgba(16, 24, 40, 0.06)',
