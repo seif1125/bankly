@@ -42,10 +42,17 @@ declare interface DoughnutChartProps {
 
 interface Transaction {
   id: string;
+  account_id: string;
+  transaction_id: string;
+  category: string[];
+  pending: boolean;
+  logo_url: string;
+  name: string;
   amount: number;
   type: "deposit" | "withdrawal";
   date: string;
 }
+
 
 interface Bank {
   id: string;
@@ -87,8 +94,8 @@ interface SideBarFooterProps {
 
 declare interface RightSidebarProps {
   user: User ;
-  transactions: Transaction[];
-  banks: (Bank & Account&Card)[];
+ 
+  banks: Account[];
 }
 
 interface AuthField<T> {
@@ -163,4 +170,19 @@ interface BankCardActionsProps {
   initialAccount: Account;
   initialUser: User;
   onUserUpdate: () => Promise<void>;
+}
+interface TransactionTableProps {
+
+  account: Account;
+  transactions: Transaction[];
+};
+
+interface RecentTransactionsProps {
+  accounts: Account[];
+  transactions: Transaction[];
+}
+ 
+interface AccountTabsProps {
+  accounts: Account[];
+  setSelectedAccount: (accountId: string) => void;
 }
