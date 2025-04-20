@@ -3,16 +3,20 @@ import HeaderBox from '@/components/HeaderBox'
 import TotalBalanceBox from '@/components/TotalBalanceBox'
 import RightSideBar from '@/components/RightSideBar'
 import { fetchAndLogPlaidTransactions, getLoggedInUser, getUserBankAccounts } from '@/lib/actions/users.actions'
-import { User } from '@/types'
+import { Account, Transaction, User } from '@/types'
 import RecentTransactions from '@/components/RecentTransactions'
 import getTotalBalance from '@/lib/utils'
 
 const  dashboard = async() => {
 
-const user= await getLoggedInUser()
-console.log('sdasdas',user);
-const accounts=await getUserBankAccounts(user.$id);
-const transactions=await fetchAndLogPlaidTransactions(user?.id)
+  const user = await getLoggedInUser();
+  if (!user) return null;
+
+  const accountsRes = await getUserBankAccounts(user.$id);
+  const transactions: Transaction[] = await fetchAndLogPlaidTransactions(user.id) as unknown as Transaction[];
+  console.log('transss',transactions.length);
+  if (!accountsRes) return null;
+  const accounts: Account[] = accountsRes.documents as unknown as Account[];
 
 
   return (
@@ -28,18 +32,17 @@ const transactions=await fetchAndLogPlaidTransactions(user?.id)
      user={user as User}
      />
      <TotalBalanceBox 
-     accounts={accounts.documents}
-     currentBalance={getTotalBalance(accounts.documents)}
-     totalBanks={accounts.documents.length}
+     accounts={accounts}
+     currentBalance={getTotalBalance(accounts)}
+     totalBanks={accounts.length}
      />
-  <RecentTransactions accounts={accounts.documents} transactions={transactions}/>
+  <RecentTransactions accounts={accounts} transactions={transactions}/>
 
 
     </div>
     <RightSideBar 
      user={user as User}
-      transactions={[{id:'1',amount:1234.35,type:'deposit',date:'2021-09-01'}]} 
-      banks={accounts.documents}
+    banks={accounts}
       
       
      

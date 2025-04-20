@@ -1,5 +1,4 @@
-import Image from 'next/image'
-import Link from 'next/link'
+
 import BankCard from './BankCard'
 import React from 'react'
 import { RightSidebarProps } from '@/types'

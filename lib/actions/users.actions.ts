@@ -8,6 +8,7 @@ import { SignupData, loginData } from "@/types";
 import { dwollaClient } from "../dwollaConfig";
 import { plaidClient } from "../plaid";
 import { generateFakeCard ,generateBanklyAddress} from "../utils";
+import { CountryCode, Products } from "plaid";
 
 
 
@@ -26,8 +27,8 @@ export async function generatePlaidLinkToken(userId: string) {
     const response = await plaidClient.linkTokenCreate({
       user: { client_user_id: userId },
       client_name: "bankly",
-      products: ["auth", "transactions"],
-      country_codes: ["US", "CA"],
+      products: ["auth" as Products, "transactions" as Products], // Replace "transactions" with a valid value from the Products type
+      country_codes: ["US" as CountryCode,"CA" as CountryCode],
       language: "en",
     });
 
@@ -97,7 +98,7 @@ export async function fetchAndLogPlaidTransactions(userId: string) {
   const accessToken = userDoc.plaidToken;
 
   const endDate = new Date().toISOString().split("T")[0];
-  const startDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+  const startDate = new Date(Date.now() - 400 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
   try {
     const response = await plaidClient.transactionsGet({
@@ -273,18 +274,33 @@ export async function fetchPlaidAccounts(userId: string, accessToken: string) {
   }
 }
 
-export async function saveBankAccountsToAppwrite(accounts: any[],userId:string) {
-  const { databases } = await createAdminClient()
+export async function saveBankAccountsToAppwrite(accounts: any[], userId: string) {
+  const { databases } = await createAdminClient();
 
   for (const account of accounts) {
-    console.log('id', account.userId.id,'$id', account.userId.$id,'accountId', account.$id,'acco',account,'s',userId);
+    // 🔍 Check for existing account with same accountId and userId
+    const existing = await databases.listDocuments(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
+      [
+        Query.equal('userId', userId),
+        Query.equal('accountId', account.accountId),
+      ]
+    );
+
+    if (existing.total > 0) {
+      console.log(`⚠️ Account with ID ${account.accountId} for user ${userId} already exists. Skipping...`);
+      continue;
+    }
+
+    // ✅ If no duplicate, create the document
     await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID!,
       process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
       ID.unique(),
       {
         userId: userId,
-        accountId: account.accountId, 
+        accountId: account.accountId,
         accountName: account.accountName,
         accountOfficialName: account.accountOfficialName,
         type: account.type,
@@ -292,10 +308,12 @@ export async function saveBankAccountsToAppwrite(accounts: any[],userId:string) 
         availableBalance: account.availableBalance,
         cardNumber: account.cardNumber,
         expiryDate: account.expiryDate,
-        dwollaFundingsource: account.fundingSourceUrl||null,
-        banklyAddress: generateBanklyAddress()||null,
+        dwollaFundingsource: account.fundingSourceUrl || null,
+        banklyAddress: generateBanklyAddress() || null,
       }
-    )
+    );
+
+    console.log(`✅ Account ${account.accountId} saved for user ${userId}`);
   }
 }
 export async function fetchTransactionsFromAppwrite(accountId: string) {

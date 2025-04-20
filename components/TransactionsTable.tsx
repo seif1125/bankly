@@ -11,16 +11,13 @@ import {
 } from "@/components/ui/table";
 import { TabsContent } from "@/components/ui/tabs";
 import { cn, formatDate, getCategoryAttributes } from "@/lib/utils";
-import Image from "next/image";
+import { TransactionTableProps } from "@/types";
 
-type Props = {
-  accountId: string;
-  transactions: any[];
-};
 
-const TransactionsTable = ({ account, transactions }: Props) => {
+
+const TransactionsTable = ({ account, transactions }: TransactionTableProps) => {
   const filteredTransactions = transactions.filter(
-    (tx) => tx.account_id === account.accountId
+    (tx,index) => (tx.account_id === account.accountId)&&index<=15
   );
 
   return (<>
@@ -43,11 +40,11 @@ const TransactionsTable = ({ account, transactions }: Props) => {
         <Table>
           <TableHeader>
             <TableRow className="text-xs text-[#475467] font-medium">
-              <TableHead className="w-[175px]">Name</TableHead>
-              <TableHead className="px-2">Amount</TableHead>
-              <TableHead className="px-2">Status</TableHead>
-              <TableHead className="px-2 max-md:hidden">Date</TableHead>
-              <TableHead className="px-2 max-md:hidden">Category</TableHead>
+              <TableHead className="w-[125px]">Name</TableHead>
+              <TableHead className="px-2 min-w-[80px]">Amount</TableHead>
+              <TableHead className="px-2 min-w-[120px]">Status</TableHead>
+              <TableHead className="px-2 hidden lg:block">Date</TableHead>
+              <TableHead className="px-2 hidden lg:block min-w-[130px]">Category</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -58,24 +55,26 @@ const TransactionsTable = ({ account, transactions }: Props) => {
               return (
                 
                 <TableRow className={tx.pending?'bg-pink-25':'bg-success-25'+' my-4 '} key={tx.transaction_id}>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium min-w-[125px]">
                     
                     <div className="flex items-center gap-3">
-                      <img src={tx.logo_url?tx.logo_url:'/icons/logo.svg'} alt={tx.name} width={40} height={40} className="rounded-[24px]" />
-                    <h1 className="text-14 font-inter text-[#344054] truncate font-semibold">
+                      <img src={tx.logo_url?tx.logo_url:'/icons/logo.svg'} alt={tx.name} width={30} height={30} className="rounded-[24px]" />
+                    <h1 className="text-xs font-inter text-[#344054] truncate font-semibold">
                     {tx.name.replaceAll('*', "").replaceAll('//', "")}
                     </h1>
                     </div>
                     </TableCell>
-                  <TableCell className={cn(tx.amount<0?'text-red-600':'text-success-600','font-inter text-sm font-semibold')}>{tx.amount<0?'-$ '+tx.amount.toFixed(2)*(-1):'$ '+tx.amount.toFixed(2)} </TableCell>
+                  <TableCell className={cn(tx.amount<0?'text-red-600':'text-success-600','font-inter text-sm font-semibold')}>{ tx.amount < 0
+    ? `-$ ${Math.abs(tx.amount).toFixed(2)}`
+    : `$ ${tx.amount.toFixed(2)}`} </TableCell>
                   <TableCell className='font-inter text-sm font-semibold flex items-center mt-2'>
                     <span className={cn(tx.pending?'text-red-600 border border-red-600':'text-success-600 border border-success-600','py-1 px-2 rounded-full')}>
                     {tx.pending ? "• declined" : "• successful"}
                     </span>
                     </TableCell>
-                  <TableCell className="max-md:hidden text-[#475467] text-sm ">{formatDate(tx.date)}</TableCell>
+                  <TableCell className="max-lg:hidden text-[#475467] text-sm ">{formatDate(tx.date)}</TableCell>
                   <TableCell className="text-left">
-                    <span className={`hidden md:inline-flex gap-2 py-1 px-3 rounded-full text-sm font-medium border-2 ${color} ${borderColor}`}>
+                    <span className={`hidden lg:inline-flex gap-2 py-1 px-3 rounded-full text-sm font-medium border-2 ${color} ${borderColor}`}>
                       {Icon && <Icon className="w-4 h-4" />}
                       {category}
                     </span>
