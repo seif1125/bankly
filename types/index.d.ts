@@ -4,7 +4,7 @@ declare interface HeaderBoxProps {
   type?: "title" | "greeting";
   title: string;
   subtext: string;
-  user?: User;
+  user?: User|{};
 }
 
 declare interface TotalBalanceBoxProps {
@@ -25,7 +25,6 @@ declare interface DoughnutChartProps {
     $permissions: string[];
     $databaseId: string;
     $collectionId: string;
-  
     firstName: string;
     lastName: string;
     email: string;
@@ -41,16 +40,18 @@ declare interface DoughnutChartProps {
 }
 
 interface Transaction {
-  id: string;
-  account_id: string;
+  senderAccountId: string;
+  receiverAccountId: string;
   transaction_id: string;
   category: string[];
   pending: boolean;
   logo_url: string;
-  name: string;
+  merchantName: string;
   amount: number;
-  type: "deposit" | "withdrawal";
-  date: string;
+  type: string;
+  authorizedDate: string;
+  authorized_date: string;
+  merchant_entity_id?: string;
 }
 
 
@@ -175,6 +176,7 @@ interface TransactionTableProps {
 
   account: Account;
   transactions: Transaction[];
+  isMainPage?: boolean;
 };
 
 interface RecentTransactionsProps {

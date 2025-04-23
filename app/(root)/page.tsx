@@ -2,7 +2,7 @@ import React from 'react'
 import HeaderBox from '@/components/HeaderBox'
 import TotalBalanceBox from '@/components/TotalBalanceBox'
 import RightSideBar from '@/components/RightSideBar'
-import { fetchAndLogPlaidTransactions, getLoggedInUser, getUserBankAccounts } from '@/lib/actions/users.actions'
+import { fetchAndLogPlaidTransactions, fetchTransactionsFromAppwrite, getLoggedInUser, getUserBankAccounts, savePlaidTransactionsToAppwrite } from '@/lib/actions/users.actions'
 import { Account, Transaction, User } from '@/types'
 import RecentTransactions from '@/components/RecentTransactions'
 import getTotalBalance from '@/lib/utils'
@@ -13,11 +13,11 @@ const  dashboard = async() => {
   if (!user) return null;
 
   const accountsRes = await getUserBankAccounts(user.$id);
-  const transactions: Transaction[] = await fetchAndLogPlaidTransactions(user.id) as unknown as Transaction[];
-  console.log('transss',transactions.length);
+
   if (!accountsRes) return null;
   const accounts: Account[] = accountsRes.documents as unknown as Account[];
-
+  const transactions = (await fetchTransactionsFromAppwrite(user.$id)) ;
+  //console.log('transactiossns',transactions);
 
   return (
     <section className='home'> 

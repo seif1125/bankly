@@ -4,7 +4,7 @@ import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { SignupData, loginData } from "@/types";
+import { SignupData, Transaction, loginData } from "@/types";
 import { dwollaClient } from "../dwollaConfig";
 import { plaidClient } from "../plaid";
 import { generateFakeCard ,generateBanklyAddress} from "../utils";
@@ -54,6 +54,7 @@ export async function exchangePlaidToken(publicToken: string, userId: string): P
       process.env.APPWRITE_USER_COLLECTION_ID!,
       [Query.equal("id", userId)]
     );
+
     const userDoc = userDocs.documents[0];
     const exchange = await plaidClient.itemPublicTokenExchange({ public_token: publicToken });
     const accessToken = exchange.data.access_token;
@@ -66,7 +67,7 @@ export async function exchangePlaidToken(publicToken: string, userId: string): P
       await databases.updateDocument(
         process.env.APPWRITE_DATABASE_ID!,
         process.env.APPWRITE_USER_COLLECTION_ID!,
-        userDoc.$id,
+        userId,
         {
           plaidToken: accessToken
         }
@@ -90,11 +91,8 @@ export async function fetchAndLogPlaidTransactions(userId: string) {
     [Query.equal("id", userId)]
   );
 
-  const userDoc = userDocs.documents[0];
-  if (!userDoc || !userDoc.plaidToken) {
-    throw new Error("User or Plaid access token not found");
-  }
-
+const userDoc = userDocs.documents[0];
+  if (!userDoc) throw new Error("User document not found");
   const accessToken = userDoc.plaidToken;
 
   const endDate = new Date().toISOString().split("T")[0];
@@ -112,7 +110,7 @@ export async function fetchAndLogPlaidTransactions(userId: string) {
     });
 
     const transactions = response.data.transactions;
-
+   
     return transactions;
   } catch (error) {
     console.error("❌ Error fetching Plaid transactions:", error);
@@ -120,20 +118,27 @@ export async function fetchAndLogPlaidTransactions(userId: string) {
   }
 }
 
-export async function saveTransactionsToAppwrite(transactions: any[]) {
+export async function savePlaidTransactionsToAppwrite(transactions: Transaction[],userId: string) {
   const { databases } = await createAdminClient();
   for (const transaction of transactions) {
+
     await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID!,
       process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
       ID.unique(),
       {
-        accountId: transaction.account_id,
+        senderUserId: transaction.amount>0?userId:transaction.merchant_entity_id||'anonymous',
+        senderAccountId: transaction.amount>0?transaction.account_id:transaction.merchant_entity_id||'anonymous',        
         amount: transaction.amount,
-        status: transaction.status,
-        authorizedDate: transaction.authorized_date,
+        status: transaction.pending? "pending" : "successfull",
+        authorizedDate: new Date(transaction.authorized_date),
         category: transaction.category,
-      }
+        merchantName: transaction.name,
+        transactionId: transaction.transaction_id,
+        receiverUserId: transaction.amount<=0?userId:transaction.merchant_entity_id||'anonymous',
+        receiverAccountId: transaction.amount<=0?transaction.account_id:transaction.merchant_entity_id||'anonymous',  
+        banklyTransfer:false
+      } 
     );
   }
 }
@@ -198,21 +203,12 @@ async function createDwollaCustomer(formData: SignupData) {
 export async function savePlaidTokenToUser(userId: string, token: string) {
   const { databases } = await createAdminClient();
 
-  // 🔍 Fetch user document by custom userId
-  const userDocs = await databases.listDocuments(
-    process.env.APPWRITE_DATABASE_ID!,
-    process.env.APPWRITE_USER_COLLECTION_ID!,
-    [Query.equal("id", userId)]
-  );
-
-  const userDoc = userDocs.documents[0];
-  if (!userDoc) throw new Error("User document not found");
 
   // ✅ Use the correct Appwrite document ID
   await databases.updateDocument(
     process.env.APPWRITE_DATABASE_ID!,
     process.env.APPWRITE_USER_COLLECTION_ID!,
-    userDoc.$id,
+    userId,
     { plaidToken: token }
   );
   await fetchAndLogPlaidTransactions(userId); // Fetch transactions after saving the token
@@ -224,17 +220,17 @@ export async function fetchPlaidAccounts(userId: string, accessToken: string) {
     // Step 1: Get full account details from Plaid
     const res = await plaidClient.accountsGet({ access_token: accessToken })
     const accounts = res.data.accounts
-//  console.log('res',accounts);
+//  //console.log('res',accounts);
     // Step 2: Get ACH numbers from Plaid
     // const achRes = await plaidClient.authGet({ access_token: accessToken })
     // const achNumbers = achRes.data.numbers.ach
-    // console.log('ACH Numbers:', achNumbers);
+    // //console.log('ACH Numbers:', achNumbers);
     // Step 3: Enrich each account
     const enrichedAccounts = //await Promise.all(
       accounts.map( account => {
         // const routingData = achNumbers.find(n => n.account_id === account.account_id)
         // if (!routingData) return null
-        // console.log('Routing Data:', routingData);
+        // //console.log('Routing Data:', routingData);
 
         // Create funding source in Dwolla
         // const dwollaRes = await dwollaClient.post(
@@ -247,7 +243,7 @@ export async function fetchPlaidAccounts(userId: string, accessToken: string) {
         //   },
         //   { 'Content-Type': 'application/json' }
         // )
-// console.log(dwollaRes);
+// //console.log(dwollaRes);
         // const fundingSourceUrl = dwollaRes.headers.get('location')
         const fakeCard = generateFakeCard(account.mask || '0000')
 
@@ -289,7 +285,7 @@ export async function saveBankAccountsToAppwrite(accounts: any[], userId: string
     );
 
     if (existing.total > 0) {
-      console.log(`⚠️ Account with ID ${account.accountId} for user ${userId} already exists. Skipping...`);
+      //console.log(`⚠️ Account with ID ${account.accountId} for user ${userId} already exists. Skipping...`);
       continue;
     }
 
@@ -313,23 +309,30 @@ export async function saveBankAccountsToAppwrite(accounts: any[], userId: string
       }
     );
 
-    console.log(`✅ Account ${account.accountId} saved for user ${userId}`);
+    //console.log(`✅ Account ${account.accountId} saved for user ${userId}`);
   }
 }
-export async function fetchTransactionsFromAppwrite(accountId: string) {
+export async function fetchTransactionsFromAppwrite(userId: string) {
   const { databases } = await createAdminClient();
 
-
- 
-    const transactions = await databases.listDocuments(
-      process.env.APPWRITE_DATABASE_ID!,
-      process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
-      [Query.equal("accountId", accountId)]
-    );
-   
+  const sentTransactions = await databases.listDocuments(
+    process.env.APPWRITE_DATABASE_ID!,
+    process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
+    [Query.equal("senderUserId", userId)]
+  );
+  
+  const receivedTransactions = await databases.listDocuments(
+    process.env.APPWRITE_DATABASE_ID!,
+    process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
+    [Query.equal("receiverUserId", userId)]
+  );
   
 
-  return  transactions;
+
+  // Combine and optionally sort by date
+  const allTransactions = [...sentTransactions.documents, ...receivedTransactions.documents];
+   console.log('all',allTransactions);
+  return allTransactions.sort((a, b) => new Date(b.authorizedDate).getTime() - new Date(a.authorizedDate).getTime());
 }
 
 
@@ -358,7 +361,7 @@ export async function signupUser(formData: SignupData) {
 // Login user and handle Plaid token
 export async function loginUser(formData: loginData) {
   try {
-    const { account, databases } = await createAdminClient();
+    const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession(formData.email, formData.password);
 
     cookies().set("my-custom-session", session.secret, {
@@ -377,19 +380,6 @@ export async function loginUser(formData: loginData) {
   }
 }
 
-// Get user document by email
-async function getUserDocument(email: string) {
-  const { databases } = await createAdminClient();
-  const userDocs = await databases.listDocuments(
-    process.env.APPWRITE_DATABASE_ID!,
-    process.env.APPWRITE_USER_COLLECTION_ID!,
-    [Query.equal("email", email)]
-  );
-
-  const userDoc = userDocs.documents[0];
-  if (!userDoc) throw new Error("User document not found");
-  return userDoc;
-}
 
 
 // Get the logged-in user's document
@@ -405,7 +395,7 @@ export async function getLoggedInUser() {
       process.env.APPWRITE_USER_COLLECTION_ID!,
       [Query.equal("id", user.$id)]
     );
-  console.log('sa',userDocs.documents[0]);
+  //console.log('sa',userDocs.documents[0]);
     return userDocs.documents[0];
   } catch (error) {
     console.error("❌ Error fetching logged-in user:", error);
@@ -447,14 +437,14 @@ export async function isUserLinkedToBankAccount(userId: string) {
 
 
 export async function getUserBankAccounts(userId: string) {
-   console.log(userId);
+   //console.log(userId);
     const { databases } = await createAdminClient();
     const accountDocs = await databases.listDocuments(
       process.env.APPWRITE_DATABASE_ID!,
       process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
       [Query.equal("userId", userId)]
     );
-   console.log(accountDocs.documents);
+   //console.log(accountDocs.documents);
     if (!accountDocs) throw new Error("User document not found");
     return accountDocs;
 
@@ -467,7 +457,7 @@ export const updateUserBankAddress = async ({
   newAddress: string;
 }) => {
   try {
-    console.log('sa');
+   
     const { databases } = await createAdminClient();
     const updated = await databases.updateDocument(
       process.env.APPWRITE_DATABASE_ID!,
@@ -475,7 +465,7 @@ export const updateUserBankAddress = async ({
       accountId,
       { banklyAddress: newAddress }
     );
-console.log(updated);
+//console.log(updated);
     return updated;
     
   } catch (error) {
@@ -494,7 +484,7 @@ export const deleteUserBankAccount = async (accountId: string) => {
       accountId
     );
 
-    console.log('Deleted account:', accountId);
+    //console.log('Deleted account:', accountId);
     return deleted;
   } catch (error) {
     console.error('Failed to delete bank account:', error);
@@ -502,27 +492,4 @@ export const deleteUserBankAccount = async (accountId: string) => {
   }
 };
 
-export const updateUserDefaultAccount = async (
-  userId: string,
-  defaultAccountId: string
-) => {
-  try {
-    const { databases } = await createAdminClient();
 
-    const updatedUser = await databases.updateDocument(
-      process.env.APPWRITE_DATABASE_ID!,
-      process.env.APPWRITE_USER_COLLECTION_ID!, // replace with your actual users collection ID
-      userId,
-      {
-        defaultAccountId: defaultAccountId,
-      }
-    );
-
-  
-    // Redirect to the desired page after updating
-    return updatedUser;
-  } catch (error) {
-    console.error('Failed to update default account:', error);
-    throw error;
-  }
-};

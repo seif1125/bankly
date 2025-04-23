@@ -10,12 +10,16 @@ import {
   savePlaidTokenToUser,
   saveBankAccountsToAppwrite,
   fetchPlaidAccounts,
+  savePlaidTransactionsToAppwrite,
+  fetchAndLogPlaidTransactions,
 } from '@/lib/actions/users.actions';
 import { Button } from './ui/button';
 import Image from 'next/image';
+import { Transaction } from '@/types';
 
 const PlaidLink = ({variant='primary'}:{variant?:'navbar'|'primary'|'rside'}) => {
   const [linkToken, setLinkToken] = useState<string | null>(null);
+  const [userDocId, setUserDocId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [existingPlaidToken, setExistingPlaidToken] = useState<string | null>(null);
   const router = useRouter();
@@ -25,9 +29,13 @@ const PlaidLink = ({variant='primary'}:{variant?:'navbar'|'primary'|'rside'}) =>
       try {
         const loggedInUser = await getLoggedInUser();
 
+    
+        if (loggedInUser && loggedInUser.$id
+          && loggedInUser.id)
+         {
+          setUserDocId(loggedInUser.$id);
+          setUserId(loggedInUser.id);
 
-        if (loggedInUser && loggedInUser.$id) {
-          setUserId(loggedInUser.$id);
 
           // Check if a plaidToken already exists
           if (loggedInUser.plaidToken&& loggedInUser.plaidToken !== '') {
@@ -55,22 +63,24 @@ const PlaidLink = ({variant='primary'}:{variant?:'navbar'|'primary'|'rside'}) =>
     token: linkToken || '',
     onSuccess: async (publicToken) => {
       try {
-        if (!userId) throw new Error('User ID not available');
+        if (!userDocId) throw new Error('User ID not available');
 
-        let accessToken = existingPlaidToken;
+        let accessToken:string = existingPlaidToken|| '';
 
         // Only exchange public token if no access token is saved
         if (!existingPlaidToken) {
-         
-          accessToken = await exchangePlaidToken(publicToken,userId);
-          await savePlaidTokenToUser(userId, accessToken);
+        
+          accessToken = await exchangePlaidToken(publicToken,userDocId);
+          await savePlaidTokenToUser(userDocId, accessToken);
         }
 
         // Fetch and store bank accounts
-        const plaidAccounts = await fetchPlaidAccounts(userId,accessToken);
-        console.log('as',userId);
-        await saveBankAccountsToAppwrite(plaidAccounts,userId);
-         
+        const plaidAccounts = await fetchPlaidAccounts(userDocId as string,accessToken);
+       
+        await saveBankAccountsToAppwrite(plaidAccounts,userDocId as string);
+        const plaidTransactions: Transaction[] = await fetchAndLogPlaidTransactions(userId as string) as unknown as Transaction[];
+        await savePlaidTransactionsToAppwrite(plaidTransactions, userDocId as string);
+
         router.push('/');
       } catch (error) {
         console.error('Error linking account:', error);

@@ -1,9 +1,7 @@
-import React from 'react'
+import TransactionHistoryPage from './[account_id]/page'
 
-const Transactions = () => {
-  return (
-    <div>Transactions</div>
-  )
+const FallbackTransactionHistoryPage = async () => {
+  return <TransactionHistoryPage params={null} />
 }
 
-export default Transactions
+export default FallbackTransactionHistoryPage

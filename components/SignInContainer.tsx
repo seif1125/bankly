@@ -20,7 +20,7 @@ const SignInContainer = () => {
           
 
           // **Check if user has a linked bank account**
-          const isLinked = await isUserLinkedToBankAccount(loggedUser.$id);
+          const isLinked = await isUserLinkedToBankAccount(loggedUser.id);
           setHasBankAccount(isLinked);
 
           

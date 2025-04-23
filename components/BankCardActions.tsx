@@ -26,7 +26,7 @@ const BankCardActions = ({ initialAccount, initialUser,onUserUpdate}:BankCardAct
           newAddress: editedAddress,
         });
         await onUserUpdate()
-        console.log('Address updated!');// 👈 Refresh after update
+    
       } catch (err) {
         console.error('Error updating address:', err);
       } finally {
@@ -40,14 +40,14 @@ const BankCardActions = ({ initialAccount, initialUser,onUserUpdate}:BankCardAct
     try {
       await deleteUserBankAccount(accountId);
       await onUserUpdate()
-      console.log('Account deleted!');
+  
     } catch (err) {
       console.error('Error deleting account:', err);
     }
   };
 
   const handleSendMoney = (accountId: string) => {
-    console.log('Send money to:', accountId);
+    //console.log('Send money to:', accountId);
   };
 
  
