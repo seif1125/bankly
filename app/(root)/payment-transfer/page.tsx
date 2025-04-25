@@ -1,10 +1,10 @@
 import React from 'react'
 
-const PaymentTransfer = () => {
+const FallBackPaymentTransfer = () => {
   return (
     <div>
-  Payment Transfer
+  Payment Transfer withoutParams
   </div>
   )
 }
-export default PaymentTransfer
+export default FallBackPaymentTransfer

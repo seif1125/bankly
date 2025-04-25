@@ -102,7 +102,7 @@ declare interface RightSidebarProps {
 interface AuthField<T> {
   name: keyof T
   label: string
-  type?: 'text' | 'email' | 'password' | 'select' | 'date'|'mobile'
+  type?: 'text' |'textAddress' |'email' | 'password' | 'select' | 'date'|'mobile'|'accountSelect'|'number'
   placeholder?: string
   fullWidth?: boolean
   options?: { label: string; value: string; icon?: React.ReactNode }[]
@@ -116,6 +116,7 @@ export interface AuthFormProps<T extends FieldValues> {
   onSubmit: (values: T) => void;
   defaultValues: T;
   type?: 'email' | 'password' | 'text' | 'date' | 'select'|'mobile';
+ 
 }
 
 interface CustomInputProps<T extends FieldValues> {
@@ -188,3 +189,20 @@ interface AccountTabsProps {
   accounts: Account[];
   setSelectedAccount: (accountId: string) => void;
 }
+
+export type ReceiverInfo = {
+  firstName: string;
+  lastName: string;
+  accountId: string;
+  cardNumber: string;
+  userId: string;
+};
+
+export type SenderInfo = {
+  firstName: string
+  lastName: string
+  UserId: string
+  accountId: string
+  amount: number
+}
+

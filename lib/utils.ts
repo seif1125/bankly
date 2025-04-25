@@ -147,3 +147,16 @@ export function generateBanklyAddress(): string {
 
   return `${address}@bankly.com`;
 }
+
+
+export function showMaskedName(firstName:string,lastName:string): string {
+  const maskedFirstName = firstName.charAt(0) + '*'.repeat(firstName.length - 1);
+  const maskedLastName = lastName.charAt(0) + '*'.repeat(lastName.length - 1);
+  return `${maskedFirstName} ${maskedLastName}`;
+}
+
+export function maskCardNumber(cardNumber: string): string {
+  const lastFourDigits = cardNumber.slice(-4);
+  const maskedPart = '*'.repeat(cardNumber.length - 4);
+  return `${maskedPart}${lastFourDigits}`;
+}

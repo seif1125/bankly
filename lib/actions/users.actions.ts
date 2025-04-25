@@ -493,3 +493,39 @@ export const deleteUserBankAccount = async (accountId: string) => {
 };
 
 
+export async function findUserByBanklyAddress(banklyAddress: string) {
+  try {
+    const { databases } = await createAdminClient();
+    // Step 1: Search the accounts collection by bankly address
+    const accountRes = await databases.listDocuments( process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
+     [
+      Query.equal("banklyAddress", banklyAddress+"@bankly.com"),
+      Query.limit(1),
+    ]);
+
+    if (accountRes.total === 0) {
+      throw new Error("No account found with this Bankly address.");
+    }
+    console.log('accountRes',accountRes.documents[0]);
+    const account = accountRes.documents[0];
+    const { accountId,cardNumber, userId } = account;
+
+    // Step 2: Get the user info from the users collection
+    const userRes = await databases.getDocument(process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_USER_COLLECTION_ID!, userId.$id);
+ 
+    const { firstName, lastName } = userRes;
+
+    return {
+      firstName,
+      lastName,
+      accountId,
+      cardNumber,
+      userId: userId.$id,
+    };
+  } catch (error) {
+    console.error("Error fetching user by Bankly address:", error);
+    throw error;
+  }
+}

@@ -9,7 +9,10 @@ import CustomInput from "@/components/CustomInput"
 import CustomSelect from "@/components/CustomSelect"
 import CustomDatePicker from "@/components/CustomDatePicker"
 import CustomMobileInput from '@/components/CustomMobileInput'
+
 import { AuthField, AuthFormProps } from '@/types'
+import CustomAccountSelect from './CustomAccountSelect'
+import CustomAddressInput from './CustomAddressInput'
 
 
 
@@ -19,6 +22,7 @@ const AuthForm = <T extends FieldValues>({
   submitText,
   onSubmit,
   defaultValues,
+
 }: AuthFormProps<T>) => {
 
   const form = useForm<T>({
@@ -46,6 +50,27 @@ const AuthForm = <T extends FieldValues>({
                       label={f.label}
                       control={form.control}
                       options={f.options || []}
+                    />
+                  )
+                case 'accountSelect':
+                  return (
+                    <CustomAccountSelect
+                      key={f.name as string}
+                      name={f.name as any}
+                      label={f.label}
+                      control={form.control}
+                      options={f.options || []}
+                    />
+                  )
+                  case 'textAddress':
+                  return ( <CustomAddressInput
+                    key={f.name as string}
+                    name={f.name as any}
+                    label={f.label}
+                    placeholder={f.placeholder}
+                    type={f.type}
+                    control={form.control}
+                    fullWidth={f.fullWidth} 
                     />
                   )
                 case 'date':
@@ -109,7 +134,7 @@ const AuthForm = <T extends FieldValues>({
             </p>
           )}
 
-          <Button className="form-btn w-full md:w-auto" disabled={isSubmitting}>
+          <Button className="form-btn w-full md:w-auto " disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

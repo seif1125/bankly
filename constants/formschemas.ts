@@ -61,3 +61,14 @@ export const signupSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   })
+
+
+export const PaymentTransferSchema = z.object({
+  senderAccountId: z.string().min(1, 'Select a sender account'),
+  banklyAddress: z
+    .string()
+    .min(1, 'Bankly address is required')
+    .max(15, 'Max 15 characters'),
+ 
+  amount: z.coerce.number({ invalid_type_error: 'A' }).positive('Amount must be greater than 0'),
+})
