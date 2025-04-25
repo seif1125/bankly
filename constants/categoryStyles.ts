@@ -1,4 +1,4 @@
-// constants/categoryStyles.ts
+ 
 
 import {
     Banknote,

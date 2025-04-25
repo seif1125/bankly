@@ -35,9 +35,9 @@ const pathname=usePathname();
             <Image
               src={item.imgURL}
               className={cn(
-                "transition-all duration-300", // Smooth transition effect
+                "transition-all duration-300",  
                 { "brightness-[3] invert-0": isActive },
-                "group-hover:brightness-[3] group-hover:invert-0" // Apply on hover
+                "group-hover:brightness-[3] group-hover:invert-0"  
               )}
               alt={item.label}
               width={30}

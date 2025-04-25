@@ -10,7 +10,7 @@ const CustomAddressInput = <T extends FieldValues>({
   placeholder,
   type = 'text',
   control,
-  fullWidth = true, // default to full width
+  fullWidth = true, 
 }: CustomInputProps<T>) => {
   return (
     <div className={fullWidth ? 'w-full' : 'w-full sm:w-1/2'}>

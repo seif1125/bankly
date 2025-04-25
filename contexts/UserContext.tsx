@@ -1,4 +1,4 @@
-// contexts/UserContext.tsx
+ 
 'use client'
 import { createContext, useContext } from "react";
 import { User } from "@/types";
@@ -17,4 +17,4 @@ export const UserProvider = ({
   );
 };
 
-export const useUserContext = () => useContext(UserContext); // ✅ this is the hook you need
+export const useUserContext = () => useContext(UserContext);  

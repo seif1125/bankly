@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import SignInForm from './SignInForm';
 import Link from 'next/link';
 import { getLoggedInUser, isUserLinkedToBankAccount } from '@/lib/actions/users.actions';
-import PlaidLink from './PlaidLink'; // Ensure you have this component
+import PlaidLink from './PlaidLink'; 
 
 const SignInContainer = () => {
   const [user, setUser] = useState<any>(null);
@@ -19,13 +19,13 @@ const SignInContainer = () => {
           setUser(loggedUser);
           
 
-          // **Check if user has a linked bank account**
+       
           const isLinked = await isUserLinkedToBankAccount(loggedUser.id);
           setHasBankAccount(isLinked);
 
           
         } else {
-          setHasBankAccount(false); // If no user, assume no bank account
+          setHasBankAccount(false);  
         }
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -43,7 +43,7 @@ const SignInContainer = () => {
       </div>
 
       {hasBankAccount === null ? (
-        <p>Loading...</p> // **Show loading state while checking**
+        <p>Loading...</p>  
       ) : !hasBankAccount&&user?.firstName ? (
        <PlaidLink /> 
       ) : (
@@ -54,7 +54,7 @@ const SignInContainer = () => {
           <Link href='/sign-up' className='text-primary form-link'>&nbsp;Sign Up</Link>
         </footer>
       </>
-      // **Show Plaid Link component if no bank account**
+     
       )}
     </>
   );

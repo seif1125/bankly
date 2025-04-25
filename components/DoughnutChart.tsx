@@ -1,9 +1,9 @@
-"use client"; // Only if using Next.js App Router
+"use client"; 
 
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend,  } from "chart.js";
 
-// Register required components
+
 ChartJS.register(ArcElement, Legend,Tooltip);
 
 const DoughnutChart : React.FC<DoughnutChartProps> =({accounts}) => {

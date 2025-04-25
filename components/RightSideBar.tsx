@@ -41,7 +41,7 @@ const RightSideBar :React.FC<RightSidebarProps>= ({user,banks}) => {
         key={bank.accountId}
         styled={true}
         index={index}
-        zIndex={banks.length - index} // Ensures the last card is on top
+        zIndex={banks.length - index}  
       />
        
       

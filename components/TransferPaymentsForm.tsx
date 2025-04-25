@@ -28,7 +28,7 @@ const TransferPaymentsForm = ( ) => {
                 UserId: user.$id,
             })
             const userAccounts = await (await getUserBankAccounts(user.$id)).documents as unknown as Account[]
-            console.log('User accounts:', userAccounts);
+      
             setAccounts(userAccounts)
           }
         } catch (error) {
@@ -87,7 +87,7 @@ const TransferPaymentsForm = ( ) => {
         cardNumber,
         userId,
       } =await    findUserByBanklyAddress(data.banklyAddress)
-      console.log('Receiver info:', firstName, lastName, accountId ,cardNumber, userId);
+      
         setReceiverInfo({
             firstName,
             lastName,

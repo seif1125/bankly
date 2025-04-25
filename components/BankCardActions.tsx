@@ -47,7 +47,7 @@ const BankCardActions = ({ initialAccount, initialUser,onUserUpdate}:BankCardAct
   };
 
   const handleSendMoney = (accountId: string) => {
-    //console.log('Send money to:', accountId);
+  
   };
 
  

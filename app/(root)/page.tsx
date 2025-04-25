@@ -17,7 +17,7 @@ const  dashboard = async() => {
   if (!accountsRes) return null;
   const accounts: Account[] = accountsRes.documents as unknown as Account[];
   const transactions = (await fetchTransactionsFromAppwrite(user.$id)) ;
-  //console.log('transactiossns',transactions);
+
 
   return (
     <section className='home'> 

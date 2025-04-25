@@ -70,8 +70,8 @@ const SignUpForm = () => {
             alert(`Signup failed gh: ${res.error}`);
           } else {
             alert("Signup successful!");
-            // Optional: redirect user
-            // router.push('/login') or homepage, etc.
+             
+             
           }
         }}
         

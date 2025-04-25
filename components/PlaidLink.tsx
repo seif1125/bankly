@@ -37,12 +37,12 @@ const PlaidLink = ({variant='primary'}:{variant?:'navbar'|'primary'|'rside'}) =>
           setUserId(loggedInUser.id);
 
 
-          // Check if a plaidToken already exists
+          
           if (loggedInUser.plaidToken&& loggedInUser.plaidToken !== '') {
             setExistingPlaidToken(loggedInUser.plaidToken);
           }
 
-          // Still generate link token to show Plaid interface
+         
 
           const token = await generatePlaidLinkToken(loggedInUser.id);
     
@@ -67,14 +67,14 @@ const PlaidLink = ({variant='primary'}:{variant?:'navbar'|'primary'|'rside'}) =>
 
         let accessToken:string = existingPlaidToken|| '';
 
-        // Only exchange public token if no access token is saved
+    
         if (!existingPlaidToken) {
         
           accessToken = await exchangePlaidToken(publicToken,userDocId);
           await savePlaidTokenToUser(userDocId, accessToken);
         }
 
-        // Fetch and store bank accounts
+      
         const plaidAccounts = await fetchPlaidAccounts(userDocId as string,accessToken);
        
         await saveBankAccountsToAppwrite(plaidAccounts,userDocId as string);

@@ -1,4 +1,4 @@
-// app/transactions/[accountId]/page.tsx
+
 import HeaderBox from '@/components/HeaderBox'
 import TransactionsTable from '@/components/TransactionsTable'
 import { getLoggedInUser, getUserBankAccounts, fetchTransactionsFromAppwrite } from '@/lib/actions/users.actions'
@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation'
 
 
 interface Props {
-  params?: { account_id: string }|null  // accountId is optional
+  params?: { account_id: string }|null  
 }
 
 const TransactionHistoryPage = async ({ params }: Props) => {

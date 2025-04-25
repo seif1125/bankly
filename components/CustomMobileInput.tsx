@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
-import {countries} from "@/constants/countries" // Should contain flag, code, dialCode
+import {countries} from "@/constants/countries"  
 import React from 'react'
 import Image from "next/image"
 import { CustomMobileInputProps ,Country} from "@/types"
@@ -60,7 +60,7 @@ const CustomMobileInput = ({ name, control, label }: CustomMobileInputProps) => 
                 placeholder="Phone number"
                 value={field.value.replace(selectedCountry.dialCode, "")}
                 onChange={(e) => {
-                  const input = e.target.value.replace(/\D/g, "") // remove non-numeric
+                  const input = e.target.value.replace(/\D/g, "")  
                   field.onChange(`${selectedCountry.dialCode}${input}`)
                 }}
               />

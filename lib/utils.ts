@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
 export default function getTotalBalance(accounts:Account[]):string{
   let total=0
   const totalBalance = accounts.reduce((total, account) => {
-    const balance = account?.availableBalance || 0; // Access the balance safely
+    const balance = account?.availableBalance || 0;  
     return total + balance;
   }, 0);
   return totalBalance.toFixed(2);
@@ -22,8 +22,8 @@ export function getCurrencyAbbr(): string {
 
 function getCurrencyFromTimeZone(timeZone: string | undefined): string {
   const currencyMap: Record<string, string> = {
-    "Africa/Cairo": "EGP",  // Egypt
-    "Asia/Dubai": "AED",    // UAE
+    "Africa/Cairo": "EGP",   
+    "Asia/Dubai": "AED",     
     "America/New_York": "USD",
     "Europe/London": "GBP",
     "Europe/Paris": "EUR",
@@ -32,7 +32,7 @@ function getCurrencyFromTimeZone(timeZone: string | undefined): string {
     "Asia/Kolkata": "INR",
   };
 
-  return timeZone && currencyMap[timeZone] ? currencyMap[timeZone] : "USD"; // Default to USD
+  return timeZone && currencyMap[timeZone] ? currencyMap[timeZone] : "USD";  
 }
 export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));
 
@@ -52,25 +52,25 @@ export function generateFakeCard(mask:string) {
     mastercard: ['51', '52', '53', '54', '55'],
   };
 
-  const cardType = Math.random() < 0.5 ? 'visa' : 'mastercard'; // Randomly choose card type
+  const cardType = Math.random() < 0.5 ? 'visa' : 'mastercard';  
   const prefix = prefixes[cardType][Math.floor(Math.random() * prefixes[cardType].length)];
   const length = 16;
 
-  // Validate the mask length
+   
   if (mask.length !== 4 || !/^\d{4}$/.test(mask)) {
     throw new Error('Invalid mask. The mask must be exactly 4 digits.');
   }
 
-  // Generate the first 12 digits (excluding the last 4, which are the mask)
+   
   let cardNumber = prefix;
   while (cardNumber.length < length - 4) {
     cardNumber += Math.floor(Math.random() * 10).toString();
   }
 
-  // Add the mask to the card number
+   
   cardNumber += mask;
 
-  // Calculate Luhn checksum digit
+   
   const digits = cardNumber.split('').map(Number).reverse();
   const checksum = digits.reduce((sum, digit, idx) => {
     if (idx % 2 === 0) {
@@ -81,17 +81,17 @@ export function generateFakeCard(mask:string) {
   }, 0);
 
   const finalDigit = (10 - (checksum % 10)) % 10;
-  cardNumber = cardNumber.slice(0, -1) + finalDigit; // Replace the last digit with the calculated checksum
+  cardNumber = cardNumber.slice(0, -1) + finalDigit;  
 
-  // Generate realistic expiry date (1 to 5 years in the future)
+   
   const now = new Date();
   const futureYear = now.getFullYear() + Math.floor(Math.random() * 5 + 1);
   const futureMonth = Math.floor(Math.random() * 12 + 1);
 
   const expiryMonth = futureMonth.toString().padStart(2, '0');
-  const expiryYear = futureYear.toString().slice(-2); // Last 2 digits
+  const expiryYear = futureYear.toString().slice(-2);  
 
-  const cvv = Math.floor(Math.random() * 900 + 100).toString(); // 3-digit CVV
+  const cvv = Math.floor(Math.random() * 900 + 100).toString();  
 
   return {
     cardNumber,
@@ -101,7 +101,7 @@ export function generateFakeCard(mask:string) {
   };
 }
 
-// utils.ts
+ 
 import { HelpCircle } from "lucide-react";
 import { Account } from "@/types";
 
@@ -119,16 +119,16 @@ export function formatDate(dateString: string): string {
 
     const date = new Date(dateString);
     const options = {
-      weekday: 'short', // 'Wed'
-      day: '2-digit',   // '14'
-      month: 'short',   // 'Jan'
-      year: 'numeric',  // '2025'
-      hour: '2-digit',  // '14' for 2:00 PM (if time is present)
-      minute: '2-digit',// '30' for minutes (if time is present)
-      hour12: false,    // Use 24-hour format for time
+      weekday: 'short',  
+      day: '2-digit',    
+      month: 'short',    
+      year: 'numeric',   
+      hour: '2-digit',   
+      minute: '2-digit', 
+      hour12: false,     
     };
   const formattedDate= new Intl.DateTimeFormat('en-GB', options).format(date);
-  // Check if the time is present
+   
   if (date.getHours() === 0 && date.getMinutes() === 0) {
     return `${formattedDate.split(',')[0]}, ${formattedDate.split(',')[1]} ${formattedDate.split(',')[2]} ${formattedDate.split(',')[3]}`;
   } else {

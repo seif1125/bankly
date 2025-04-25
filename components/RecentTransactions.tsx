@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { Tabs } from "@/components/ui/tabs";
 import AccountsTabs from "./AccountsTabs";
-import TransactionsTable from "./TransactionsTable"; // <- Imported here
+import TransactionsTable from "./TransactionsTable";  
 import { RecentTransactionsProps} from "@/types";
 
 const RecentTransactions = ({

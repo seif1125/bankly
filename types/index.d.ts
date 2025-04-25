@@ -29,10 +29,10 @@ declare interface DoughnutChartProps {
     lastName: string;
     email: string;
     country: string;
-    dateOfBirth: string; // ISO string (use `Date` if parsed)
+    dateOfBirth: string;  
     password: string;
     mobile: string;
-    id: string; // internal custom ID
+    id: string;  
     dwollaUrl: string;
     plaidToken: string;
     defaultAccountId: string;
