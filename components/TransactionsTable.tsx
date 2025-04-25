@@ -19,7 +19,7 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
 
   const limit=isMainPage?1000:15;
   const filteredTransactions = transactions.filter(
-    (tx,index) =>{; 
+    (tx,index) =>{console.log('sender',tx.senderAccountId,'receiver',tx.receiverAccountId,'account',account.accountId,'index',index); 
       return  (tx.senderAccountId === account.accountId || tx.receiverAccountId === account.accountId)&&index<=limit}
   )
 
@@ -66,7 +66,7 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
                     <div className="flex items-center gap-3 w-28">
                       <img src={tx.logo_url?tx.logo_url:'/icons/logo.svg'} alt={tx.merchantName} width={25} height={25} className="rounded-[24px]" />
                     <h1 className="text-xs font-inter text-[#344054] truncate font-semibold">
-                    {tx.merchantName.replaceAll('*', "").replaceAll(' 
+                    {tx.merchantName.replaceAll('*', "").replaceAll('//', "")}
                     </h1>
                     </div>
                     </TableCell>
@@ -125,7 +125,7 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
                     <div className="flex items-center gap-3 w-[175px]">
                       <img src={tx.logo_url?tx.logo_url:'/icons/logo.svg'} alt={tx.merchantName} width={25} height={25} className="rounded-[24px]" />
                     <h1 className="text-xs font-inter text-[#344054] font-semibold">
-                    {tx.merchantName.replaceAll('*', "").replaceAll(' 
+                    {tx.merchantName.replaceAll('*', "").replaceAll('//', "")}
                     </h1>
                     </div>
                     </TableCell>

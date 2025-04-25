@@ -196,7 +196,7 @@ async function createDwollaCustomer(formData: SignupData) {
     ssn: "1234",
   };
 
-  return await dwollaClient.post("https: 
+  return 'dwolla.co '
     
 }
 
@@ -319,7 +319,7 @@ export async function signupUser(formData: SignupData) {
   try {
     const session = await createUserInAppwrite(formData);
 
-     
+    // Set session cookie
     cookies().set("my-custom-session", session.secret, {
       path: "/",
       httpOnly: true,
@@ -334,7 +334,7 @@ export async function signupUser(formData: SignupData) {
   }
 }
 
- 
+// Login user and handle Plaid token
 export async function loginUser(formData: loginData) {
   try {
     const { account } = await createAdminClient();
@@ -358,7 +358,7 @@ export async function loginUser(formData: loginData) {
 
 
 
- 
+// Get the logged-in user's document
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
@@ -379,7 +379,7 @@ export async function getLoggedInUser() {
   }
 }
 
- 
+// Log out user
 export async function logOutUser() {
   try {
     const { account } = await createSessionClient();
@@ -396,17 +396,17 @@ export async function isUserLinkedToBankAccount(userId: string) {
   try {
     const { databases } = await createAdminClient();
 
-     
+    // **Check if the user has any linked accounts in the Appwrite `accounts` table**
     const userAccounts = await databases.listDocuments(
       process.env.APPWRITE_DATABASE_ID!,
-      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,  
+      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!, // Table for linked accounts
       [Query.equal("userId", userId)]
     );
 
-    return userAccounts.documents.length > 0;  
+    return userAccounts.documents.length > 0; // ✅ Returns `true` if user has at least one linked bank account
   } catch (error) {
     console.error("❌ Error checking linked bank account:", error);
-    return false;  
+    return false; // ❌ Returns `false` if an error occurs
   }
 }
 
@@ -471,7 +471,7 @@ export const deleteUserBankAccount = async (accountId: string) => {
 export async function findUserByBanklyAddress(banklyAddress: string) {
   try {
     const { databases } = await createAdminClient();
-     
+    // Step 1: Search the accounts collection by bankly address
     const accountRes = await databases.listDocuments( process.env.APPWRITE_DATABASE_ID!,
       process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
      [
@@ -486,7 +486,7 @@ export async function findUserByBanklyAddress(banklyAddress: string) {
     const account = accountRes.documents[0];
     const { accountId,cardNumber, userId } = account;
 
-     
+    // Step 2: Get the user info from the users collection
     const userRes = await databases.getDocument(process.env.APPWRITE_DATABASE_ID!,
       process.env.APPWRITE_USER_COLLECTION_ID!, userId.$id);
  
