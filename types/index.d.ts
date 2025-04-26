@@ -52,6 +52,7 @@ interface Transaction {
   authorizedDate: string;
   authorized_date: string;
   merchant_entity_id?: string;
+  banklyTransfer?: boolean;
 }
 
 

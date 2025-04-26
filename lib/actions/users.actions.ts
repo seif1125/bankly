@@ -294,7 +294,7 @@ export async function fetchTransactionsFromAppwrite(userId: string) {
   const sentTransactions = await databases.listDocuments(
     process.env.APPWRITE_DATABASE_ID!,
     process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
-    [Query.equal("senderUserId", userId)]
+    [    Query.equal("senderUserId", userId)  ]
   );
   
   const receivedTransactions = await databases.listDocuments(
@@ -307,8 +307,10 @@ export async function fetchTransactionsFromAppwrite(userId: string) {
 
    
   const allTransactions = [...sentTransactions.documents, ...receivedTransactions.documents];
-   
-  return allTransactions.sort((a, b) => new Date(b.authorizedDate).getTime() - new Date(a.authorizedDate).getTime());
+  const filteredTransactions = allTransactions.filter((tx, index, self) =>
+    index === self.findIndex((t) => t.$id === tx.$id)
+  );
+  return filteredTransactions.sort((a, b) => new Date(b.authorizedDate).getTime() - new Date(a.authorizedDate).getTime());
 }
 
 

@@ -19,7 +19,7 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
 
   const limit=isMainPage?1000:15;
   const filteredTransactions = transactions.filter(
-    (tx,index) =>{console.log('sender',tx.senderAccountId,'receiver',tx.receiverAccountId,'account',account.accountId,'index',index); 
+    (tx,index) =>{ 
       return  (tx.senderAccountId === account.accountId || tx.receiverAccountId === account.accountId)&&index<=limit}
   )
 
@@ -70,9 +70,23 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
                     </h1>
                     </div>
                     </TableCell>
-                  <TableCell className={cn(tx.amount<0?'text-red-600':'text-success-600','font-inter text-sm font-semibold')}>{ tx.amount < 0
-    ? `-$ ${Math.abs(tx.amount).toFixed(2)}`
-    : `+$ ${tx.amount.toFixed(2)}`} </TableCell>
+                    <TableCell className={cn(
+  (tx.banklyTransfer 
+    ? (tx.senderAccountId === account.accountId ? 'text-red-600' : 'text-success-600') 
+    : (tx.amount < 0 ? 'text-red-600' : 'text-success-600')
+  ),
+  'font-inter text-sm font-semibold'
+)}>
+  {tx.banklyTransfer ? (
+    tx.senderAccountId === account.accountId
+      ? `-$ ${Math.abs(tx.amount).toFixed(2)}`
+      : `+$ ${tx.amount.toFixed(2)}`
+  ) : (
+    tx.amount < 0
+      ? `-$ ${Math.abs(tx.amount).toFixed(2)}`
+      : `+$ ${tx.amount.toFixed(2)}`
+  )}
+</TableCell>
                   <TableCell className='font-inter text-xs font-semibold flex items-center mt-2'>
                     <span className={cn(tx.pending?'text-red-600 border border-red-600':'text-success-600 border border-success-600','py-1 px-2 rounded-full')}>
                     {tx.pending ? "• declined" : "• successful"}
@@ -129,9 +143,23 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
                     </h1>
                     </div>
                     </TableCell>
-                  <TableCell className={cn(tx.amount<0?'text-red-600':'text-success-600','font-inter text-sm font-semibold')}>{ tx.amount < 0
-    ? `-$ ${Math.abs(tx.amount).toFixed(2)}`
-    : `+$ ${tx.amount.toFixed(2)}`} </TableCell>
+                    <TableCell className={cn(
+  (tx.banklyTransfer 
+    ? (tx.senderAccountId === account.accountId ? 'text-red-600' : 'text-success-600') 
+    : (tx.amount < 0 ? 'text-red-600' : 'text-success-600')
+  ),
+  'font-inter text-sm font-semibold'
+)}>
+  {tx.banklyTransfer ? (
+    tx.senderAccountId === account.accountId
+      ? `-$ ${Math.abs(tx.amount).toFixed(2)}`
+      : `+$ ${tx.amount.toFixed(2)}`
+  ) : (
+    tx.amount < 0
+      ? `-$ ${Math.abs(tx.amount).toFixed(2)}`
+      : `+$ ${tx.amount.toFixed(2)}`
+  )}
+</TableCell>
                   <TableCell className='font-inter text-xs font-semibold flex items-center mt-2'>
                     <span className={cn(tx.pending?'text-red-600 border border-red-600':'text-success-600 border border-success-600','py-1 px-2 rounded-full')}>
                     {tx.pending ? "• declined" : "• successful"}
