@@ -116,25 +116,28 @@ export function getCategoryAttributes(category: string) {
 }
 
 export function formatDate(dateString: string): string { 
+  const date = new Date(dateString);
 
-    const date = new Date(dateString);
-    const options = {
-      weekday: 'short',  
-      day: '2-digit',    
-      month: 'short',    
-      year: 'numeric',   
-      hour: '2-digit',   
-      minute: '2-digit', 
-      hour12: false,     
-    };
-  const formattedDate= new Intl.DateTimeFormat('en-GB', options).format(date);
-   
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: 'short',  
+    day: '2-digit',    
+    month: 'short',    
+    year: 'numeric',   
+    hour: '2-digit',   
+    minute: '2-digit', 
+    hour12: false,     
+  };
+
+  const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
+
   if (date.getHours() === 0 && date.getMinutes() === 0) {
-    return `${formattedDate.split(',')[0]}, ${formattedDate.split(',')[1]} ${formattedDate.split(',')[2]} ${formattedDate.split(',')[3]}`;
+    const parts = formattedDate.split(',');
+    return `${parts[0]}, ${parts[1]} ${parts[2]} ${parts[3]}`;
   } else {
     return `${formattedDate}`;
   }
 };
+
 
 export function generateBanklyAddress(): string {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';

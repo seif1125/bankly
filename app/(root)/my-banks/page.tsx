@@ -44,7 +44,7 @@ const BankPage = () => {
       {accounts.map((account) => (
         <div key={account.$id} className="flex flex-col items-center w-full sm:w-[300px]">  
          <BankCard bank={account} index={0} zIndex={0} />
-         <BankCardActions initialAccount={account} initialUser={user} onUserUpdate={fetchAccounts}/>
+         <BankCardActions initialAccount={account} initialUser={user as User} onUserUpdate={fetchAccounts}/>
         </div>
       ))}
     </div>

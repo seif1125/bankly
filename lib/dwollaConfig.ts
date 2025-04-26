@@ -5,5 +5,5 @@ const DWOLLA_SECRET = process.env.DWOLLA_SECRET!;
 export const dwollaClient = new Dwolla.Client({
   key: DWOLLA_KEY,
   secret: DWOLLA_SECRET,
-  environment: process.env.DWOLLA_ENV || 'sandbox',
+  environment: 'sandbox',
 });

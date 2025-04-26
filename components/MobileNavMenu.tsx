@@ -9,14 +9,14 @@ import {
     Sheet,
     SheetClose,
     SheetContent,
- 
-    SheetTitle,
     SheetTrigger,
   } from "@/components/ui/sheet"
 import SideBarFooter from './SideBarFooter'
 import { User } from '@/types'
-  
-const MobileNavMenu = ({user}:User) => {
+interface MobileNavMenuProps {
+  user: User;
+}
+const MobileNavMenu = ({user}:MobileNavMenuProps) => {
     const pathname=usePathname();
   return (
     <section className="md:hidden "> 

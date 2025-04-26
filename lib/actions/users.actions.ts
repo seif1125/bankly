@@ -4,7 +4,7 @@ import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Account, SignupData, Transaction, loginData } from "@/types";
+import { Account, SignupData, Transaction, TransactionData, loginData } from "@/types";
 import { dwollaClient } from "../dwollaConfig";
 import { plaidClient } from "../plaid";
 import { generateFakeCard ,generateBanklyAddress} from "../utils";
@@ -156,8 +156,7 @@ async function createUserInAppwrite(formData: SignupData) {
   );
 
   const session = await account.createEmailPasswordSession(formData.email, formData.password);
-  const dwollaResponse = await createDwollaCustomer(formData);
-  const dwollaUrl = handleApiResponse(dwollaResponse.headers.get("location"), "Failed to create Dwolla customer");
+
 
    
   await databases.createDocument(
@@ -174,7 +173,7 @@ async function createUserInAppwrite(formData: SignupData) {
       dateOfBirth: formData.dateOfBirth,
       password: formData.password,
       plaidToken: null,
-      dwollaUrl,
+    
     }
   );
 
@@ -317,7 +316,7 @@ export async function fetchTransactionsFromAppwrite(userId: string) {
 
 
  
-export async function signupUser(formData: SignupData) {
+export async function signupUser(formData: SignupData): Promise<{ success: boolean; error?: string }> {
   try {
     const session = await createUserInAppwrite(formData);
 
@@ -513,13 +512,7 @@ export async function applyTransaction({
   senderUserId,
   receiverUserId,
   amount,
-}: {
-  senderAccountId: string;
-  receiverAccountId: string;
-  senderUserId: string;
-  receiverUserId: string;
-  amount: number;
-}) {
+}:TransactionData) {
   const { databases } = await createAdminClient();
 
   const transactionId = ID.unique();

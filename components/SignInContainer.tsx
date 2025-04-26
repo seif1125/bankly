@@ -50,7 +50,7 @@ const SignInContainer = () => {
         <>
         <SignInForm />
         <footer className='flex justify-center items-center '>
-          <p className='text-14 text-gray-600 font-normal'>Don't have an account? </p>
+          <p className='text-14 text-gray-600 font-normal'>Don&#39;t have an account? </p>
           <Link href='/sign-up' className='text-primary form-link'>&nbsp;Sign Up</Link>
         </footer>
       </>

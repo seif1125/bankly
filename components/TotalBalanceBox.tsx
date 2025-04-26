@@ -3,6 +3,7 @@ import React from 'react'
 import {  getCurrencyAbbr } from '@/lib/utils'
 import CountUp from 'react-countup'
 import DoughnutChart from './DoughnutChart';
+import { TotalBalanceBoxProps } from '@/types';
 
 
 
@@ -26,7 +27,7 @@ const TotalBalanceBox: React.FC<TotalBalanceBoxProps> = ({ totalBanks, currentBa
                 duration={.25}
                 separator=","
                 decimals={2}
-                end={currentBalance}
+                end={currentBalance as number}
                 prefix={getCurrencyAbbr()+' '}
                 />
                 </div>

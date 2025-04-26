@@ -4,17 +4,18 @@ declare interface HeaderBoxProps {
   type?: "title" | "greeting";
   title: string;
   subtext: string;
-  user?: User|{};
+  user?: User|undefined;
 }
 
 declare interface TotalBalanceBoxProps {
-  accounts?:string[];
+  accounts?:Account[];
   totalBanks: number;
-  currentBalance: number;
+  currentBalance: string | number;
+  
 }
 
 declare interface DoughnutChartProps {
-  accounts:string[];
+  accounts:Account[];
 }
 
 
@@ -41,6 +42,10 @@ declare interface DoughnutChartProps {
 
 interface Transaction {
   senderAccountId: string;
+  name: string;
+  account_id: string;
+  senderUserId: string;
+  user_id: string;
   receiverAccountId: string;
   transaction_id: string;
   category: string[];
@@ -116,7 +121,7 @@ export interface AuthFormProps<T extends FieldValues> {
   submitText: string;
   onSubmit: (values: T) => void;
   defaultValues: T;
-  type?: 'email' | 'password' | 'text' | 'date' | 'select'|'mobile';
+  type?: 'email' | 'password' | 'text' | 'date' | 'select'|'mobile'|'sign-in'|'sign-up'|'accountSelect'|'textAddress'|'number';
  
 }
 
@@ -162,7 +167,8 @@ export interface SignupData {
   password: string;
   country: string;        
   mobile: string;        
-  dateOfBirth: Date;      
+  dateOfBirth: string; 
+   
 }
 
 export interface loginData {
@@ -205,5 +211,13 @@ export type SenderInfo = {
   userId: string
   accountId: string
   amount: number
+}
+
+export type TransactionData = {
+  senderAccountId: string;
+  receiverAccountId: string;
+  senderUserId: string;
+  receiverUserId: string;
+  amount: number;
 }
 

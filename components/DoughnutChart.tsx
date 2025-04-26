@@ -2,12 +2,13 @@
 
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend,  } from "chart.js";
+import { DoughnutChartProps } from "@/types";
 
 
 ChartJS.register(ArcElement, Legend,Tooltip);
 
 const DoughnutChart : React.FC<DoughnutChartProps> =({accounts}) => {
-  const labels=accounts.map((account) => account.accountName);
+  const labels=accounts.map((account) => account.accountName );
   const balances=accounts.map((account) => account.availableBalance);
  
   const data = {

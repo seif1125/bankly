@@ -1,4 +1,4 @@
-import { HeaderBoxProps, User } from '@/types'
+import { HeaderBoxProps, User} from '@/types'
 import React from 'react'
 
 const HeaderBox = ({type='title',title,subtext,user}:HeaderBoxProps) => {

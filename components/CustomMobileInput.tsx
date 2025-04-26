@@ -10,13 +10,14 @@ import { CustomMobileInputProps ,Country} from "@/types"
 
 
 const CustomMobileInput = ({ name, control, label }: CustomMobileInputProps) => {
+  const [selectedCountry, setSelectedCountry] = React.useState<Country>(countries[0])
+  const [open, setOpen] = React.useState(false)
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState }) => {
-        const [selectedCountry, setSelectedCountry] = React.useState<Country>(countries[0])
-        const [open, setOpen] = React.useState(false)
+     
 
         const handleSelect = (country: Country) => {
           setSelectedCountry(country)

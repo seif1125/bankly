@@ -9,8 +9,10 @@ import SideBarFooter from './SideBarFooter'
 import { User } from '@/types'
 import PlaidLink from './PlaidLink'
 
-
-const SideBar = ({user}:User) => {
+interface SideBarProps {
+  user: User;
+}
+const SideBar = ({user}:SideBarProps) => {
 const pathname=usePathname();
 
   return (

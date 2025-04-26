@@ -4,9 +4,10 @@ import React, { useEffect, useState } from 'react'
 import AuthForm from '@/components/AuthForm'
 import { PaymentTransferSchema } from '@/constants/formschemas'
 import { z } from 'zod'
-import { Account, AuthField, ReceiverInfo, SenderInfo } from '@/types'
+import { Account, AuthField, ReceiverInfo, SenderInfo, TransactionData } from '@/types'
 import { applyTransaction, findUserByBanklyAddress, getLoggedInUser, getUserBankAccounts } from '@/lib/actions/users.actions'
 import { getInitials, maskCardNumber, showMaskedName } from '@/lib/utils'
+
 
 
 type FormSchema = z.infer<typeof PaymentTransferSchema>
@@ -98,9 +99,12 @@ const TransferPaymentsForm = ( ) => {
         })
     }
     const handleConfirm = async () => {
-      console.log('Sender Info:', senderInfo);
-      console.log('Receiver Info:', receiverInfo);
-      applyTransaction({senderAccountId:senderInfo?.accountId, receiverAccountId:receiverInfo?.accountId, senderUserId:senderInfo?.userId, receiverUserId:receiverInfo?.userId, amount:senderInfo?.amount})
+
+      if (!senderInfo?.accountId || !senderInfo?.userId || !receiverInfo?.accountId || !receiverInfo?.userId || senderInfo.amount === undefined) {
+        alert('Missing sender or receiver information.');
+        return;
+      }
+      applyTransaction({senderAccountId:senderInfo?.accountId, receiverAccountId:receiverInfo?.accountId, senderUserId:senderInfo?.userId, receiverUserId:receiverInfo?.userId, amount:senderInfo?.amount} as TransactionData)
     }
 
 
@@ -113,7 +117,7 @@ const TransferPaymentsForm = ( ) => {
             fields={fields}
             submitText="proceed"
             onSubmit={handleSubmit}
-            defaultValues={defaultValues}
+            defaultValues={defaultValues as FormSchema}
           />
 
 

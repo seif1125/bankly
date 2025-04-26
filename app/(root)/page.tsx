@@ -3,7 +3,7 @@ import HeaderBox from '@/components/HeaderBox'
 import TotalBalanceBox from '@/components/TotalBalanceBox'
 import RightSideBar from '@/components/RightSideBar'
 import { fetchTransactionsFromAppwrite, getLoggedInUser, getUserBankAccounts} from '@/lib/actions/users.actions'
-import { Account, User } from '@/types'
+import { Account, Transaction, User } from '@/types'
 import RecentTransactions from '@/components/RecentTransactions'
 import getTotalBalance from '@/lib/utils'
 
@@ -36,7 +36,7 @@ const  dashboard = async() => {
      currentBalance={getTotalBalance(accounts)}
      totalBanks={accounts.length}
      />
-  <RecentTransactions accounts={accounts} transactions={transactions}/>
+  <RecentTransactions accounts={accounts} transactions={transactions as unknown as Transaction[]}/>
 
 
     </div>
