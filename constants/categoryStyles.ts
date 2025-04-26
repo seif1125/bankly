@@ -2,7 +2,6 @@
 
 import {
     Banknote,
-    Pizza,
     ShoppingBag,
     Plane,
     HeartPulse,
@@ -30,7 +29,7 @@ import {
       label: "Food",
       color: "text-orange-600",
       borderColor: "border-orange-200",
-      icon: Pizza,
+      icon: HeartPulse,
     },
     "Shops": {
       label: "Shopping",
