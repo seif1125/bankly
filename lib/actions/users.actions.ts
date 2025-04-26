@@ -4,7 +4,7 @@ import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { SignupData, Transaction, loginData } from "@/types";
+import { Account, SignupData, Transaction, loginData } from "@/types";
 import { dwollaClient } from "../dwollaConfig";
 import { plaidClient } from "../plaid";
 import { generateFakeCard ,generateBanklyAddress} from "../utils";
@@ -196,7 +196,7 @@ async function createDwollaCustomer(formData: SignupData) {
     ssn: "1234",
   };
 
-  return 'dwolla.co '
+  return 'dwolla.co'
     
 }
 
@@ -501,6 +501,117 @@ export async function findUserByBanklyAddress(banklyAddress: string) {
     };
   } catch (error) {
     console.error("Error fetching user by Bankly address:", error);
+    throw error;
+  }
+}
+
+export async function applyTransaction({
+  senderAccountId,
+  receiverAccountId,
+  senderUserId,
+  receiverUserId,
+  amount,
+}: {
+  senderAccountId: string;
+  receiverAccountId: string;
+  senderUserId: string;
+  receiverUserId: string;
+  amount: number;
+}) {
+  const { databases } = await createAdminClient();
+
+  const transactionId = ID.unique();
+  const transactionUID= ID.unique();
+  console.log('senderUserId', senderUserId);
+  try {
+    // 1. Create the transaction document with status "pending"
+    await databases.createDocument(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
+      transactionUID, 
+      {
+        transactionId,
+        senderUserId,
+        senderAccountId,
+        receiverUserId,
+        receiverAccountId,
+        merchantName: "Bankly transfer",
+        category:['Transfer'],
+        amount,
+        status: "pending",
+        authorizedDate: new Date(),
+        banklyTransfer: true,
+      }
+    );
+
+    //2. Fetch sender and receiver accounts
+    const senderAccount = await databases.listDocuments(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
+      [
+        Query.equal('accountId', senderAccountId),
+        Query.limit(1) // Replace 'yourFieldName' with the correct field
+      ]
+    );
+
+    const receiverAccount = await databases.listDocuments(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
+      [
+        Query.equal('accountId', receiverAccountId),
+        Query.limit(1) // Replace 'yourFieldName' with the correct field
+      ]
+    )
+
+    // 3. Check if sender has enough balance
+    if (senderAccount.documents[0].availableBalance < amount) {
+      throw new Error("Insufficient balance");
+    }
+
+    // 4. Update sender's available balance (subtract)
+    await databases.updateDocument(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
+      senderAccount.documents[0].$id,
+      {
+        availableBalance: senderAccount.documents[0].availableBalance - amount,
+      }
+    );
+
+    // 5. Update receiver's available balance (add)
+    await databases.updateDocument(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_ACCOUNTS_COLLECTION_ID!,
+      receiverAccount.documents[0].$id,
+      {
+        availableBalance: receiverAccount.documents[0].availableBalance + amount,
+      }
+    );
+
+    // 6. Mark transaction as successful
+    await databases.updateDocument(
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
+      transactionUID,
+      {
+        status: "successful",
+      }
+    );
+
+     return { success: true };
+  } catch (error) {
+    console.error("❌ Error applying transaction:", error);
+
+    // 7. If any error, mark transaction as failed
+    // await databases.updateDocument(
+    //   process.env.APPWRITE_DATABASE_ID!,
+    //   process.env.APPWRITE_TRANSACTIONS_COLLECTION_ID!,
+    //   transactionId,
+    //   {
+    //     status: "failed",
+    //   }
+    // );
+
     throw error;
   }
 }

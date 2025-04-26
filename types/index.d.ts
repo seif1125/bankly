@@ -201,7 +201,7 @@ export type ReceiverInfo = {
 export type SenderInfo = {
   firstName: string
   lastName: string
-  UserId: string
+  userId: string
   accountId: string
   amount: number
 }

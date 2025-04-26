@@ -5,7 +5,7 @@ import AuthForm from '@/components/AuthForm'
 import { PaymentTransferSchema } from '@/constants/formschemas'
 import { z } from 'zod'
 import { Account, AuthField, ReceiverInfo, SenderInfo } from '@/types'
-import { findUserByBanklyAddress, getLoggedInUser, getUserBankAccounts } from '@/lib/actions/users.actions'
+import { applyTransaction, findUserByBanklyAddress, getLoggedInUser, getUserBankAccounts } from '@/lib/actions/users.actions'
 import { getInitials, maskCardNumber, showMaskedName } from '@/lib/utils'
 
 
@@ -25,7 +25,7 @@ const TransferPaymentsForm = ( ) => {
             setSenderInfo({
                 firstName: user.firstName,
                 lastName: user.lastName,
-                UserId: user.$id,
+                userId: user.$id,
             })
             const userAccounts = await (await getUserBankAccounts(user.$id)).documents as unknown as Account[]
       
@@ -76,10 +76,11 @@ const TransferPaymentsForm = ( ) => {
   
     const handleSubmit = async (data: FormSchema) => {
       setReceiverInfo(null);
-      setSenderInfo({
+      setSenderInfo((prev) => ({
+        ...prev,
         accountId: data.senderAccountId,
         amount: data.amount,
-    })
+    }))
       const  {
         firstName,
         lastName,
@@ -96,6 +97,13 @@ const TransferPaymentsForm = ( ) => {
             userId,
         })
     }
+    const handleConfirm = async () => {
+      console.log('Sender Info:', senderInfo);
+      console.log('Receiver Info:', receiverInfo);
+      applyTransaction({senderAccountId:senderInfo?.accountId, receiverAccountId:receiverInfo?.accountId, senderUserId:senderInfo?.userId, receiverUserId:receiverInfo?.userId, amount:senderInfo?.amount})
+    }
+
+
     if (isLoading) return <p>Loading accounts...</p>
     if (accounts.length === 0) return <p>No accounts available</p>
     return (
@@ -109,9 +117,10 @@ const TransferPaymentsForm = ( ) => {
           />
 
 
-          <hr className='w-full'></hr>
+          
     
-          {receiverInfo && (
+          {receiverInfo && (<>
+            <hr className='w-full'></hr>
             <div className="p-4 border flex flex-col gap-6  rounded-md bg-muted">
                 <h1 className='text-[14px] text-gray-600 font-normal'>Receiver Info</h1>
                 <div className='flex items-center justify-between space-x-4'>
@@ -133,11 +142,12 @@ const TransferPaymentsForm = ( ) => {
 
 
             <div className='flex justify-end'>
-              <button className=' text-white bg-slate-950 px-4 py-2 rounded-md '>Confirm Transfer</button>
+              <button onClick={handleConfirm} className=' text-white bg-slate-950 px-4 py-2 rounded-md '>Confirm Transfer</button>
             </div>
             
 
             </div>
+            </>
           )}
         </div>
         )
