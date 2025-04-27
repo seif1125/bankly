@@ -111,7 +111,7 @@ export function getCategoryAttributes(category: string) {
 
   return {
     ...style,
-    icon: style.icon || HelpCircle,
+    icon: style.icon || '/icons/help-circle.svg', // fallback to help icon if missing
   };
 }
 

@@ -150,7 +150,7 @@
   }
 
   .recent-transactions-tablist {
-    @apply custom-scrollbar bg-transparent mb-8 flex w-full flex-nowrap justify-start ;
+    @apply custom-scrollbar bg-transparent mb-8 flex w-full flex-wrap gap-4  md:gap-0 justify-start ;
   }
 
   /* Right sidebar */

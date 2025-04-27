@@ -1,10 +1,7 @@
-import React from 'react'
+import PaymentTransfer from './[account_id]/page'
 
-const FallBackPaymentTransfer = () => {
-  return (
-    <div>
-  Payment Transfer withoutParams
-  </div>
-  )
+const FallbackPaymentTransfer = async () => {
+  return <PaymentTransfer params={null} />
 }
-export default FallBackPaymentTransfer
+
+export default FallbackPaymentTransfer

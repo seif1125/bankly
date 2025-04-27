@@ -4,15 +4,16 @@ import React, { useEffect, useState } from 'react'
 import AuthForm from '@/components/AuthForm'
 import { PaymentTransferSchema } from '@/constants/formschemas'
 import { z } from 'zod'
-import { Account, AuthField, ReceiverInfo, SenderInfo, TransactionData } from '@/types'
+import { Account, AuthField, paramsProps, ReceiverInfo, SenderInfo, TransactionData } from '@/types'
 import { applyTransaction, findUserByBanklyAddress, getLoggedInUser, getUserBankAccounts } from '@/lib/actions/users.actions'
 import { getInitials, maskCardNumber, showMaskedName } from '@/lib/utils'
+import { notFound } from 'next/navigation'
 
 
 
 type FormSchema = z.infer<typeof PaymentTransferSchema>
 
-const TransferPaymentsForm = ( ) => {
+const TransferPaymentsForm = ({params}:paramsProps ) => {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [senderInfo, setSenderInfo] = useState<Partial<SenderInfo> | null>(null)
   const [receiverInfo, setReceiverInfo] = useState<ReceiverInfo | null>(null)
@@ -31,6 +32,9 @@ const TransferPaymentsForm = ( ) => {
             const userAccounts = await (await getUserBankAccounts(user.$id)).documents as unknown as Account[]
       
             setAccounts(userAccounts)
+              const selectedAccountId = params?.account_id || accounts[0]?.accountId
+              const selectedAccount = accounts.find((account: Account) => account.accountId === selectedAccountId)
+              if (!selectedAccount) return notFound();
           }
         } catch (error) {
           console.error('Error loading accounts:', error)
@@ -111,7 +115,7 @@ const TransferPaymentsForm = ( ) => {
     if (isLoading) return <p>Loading accounts...</p>
     if (accounts.length === 0) return <p>No accounts available</p>
     return (
-     <div className="space-y-4 flex flex-col w-1/2  ">
+     <div className="space-y-4 flex flex-col w-full lg:w-1/2  ">
           <AuthForm<FormSchema>
             schema={PaymentTransferSchema}
             fields={fields}

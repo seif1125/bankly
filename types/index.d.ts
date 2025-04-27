@@ -221,3 +221,6 @@ export type TransactionData = {
   amount: number;
 }
 
+export interface paramsProps {
+  params?: { account_id: string }|null  
+}

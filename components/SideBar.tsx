@@ -24,7 +24,7 @@ const pathname=usePathname();
       </Link>
   
       {sidebarLinks.map((item) => {
-        const isActive = pathname === item.route 
+      const isActive = (item.label==='Home'&&pathname===item.route)||(pathname.startsWith(item.route)&&item.label!=='Home');
         return (
           <Link
             href={item.route}

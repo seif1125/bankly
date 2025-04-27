@@ -2,15 +2,13 @@
 import HeaderBox from '@/components/HeaderBox'
 import TransactionsTable from '@/components/TransactionsTable'
 import { getLoggedInUser, getUserBankAccounts, fetchTransactionsFromAppwrite } from '@/lib/actions/users.actions'
-import { Account, Transaction } from '@/types'
+import { Account, paramsProps, Transaction } from '@/types'
 import { notFound } from 'next/navigation'
 
 
-interface Props {
-  params?: { account_id: string }|null  
-}
 
-const TransactionHistoryPage = async ({ params }: Props) => {
+
+const TransactionHistoryPage = async ({ params }: paramsProps) => {
   const user = await getLoggedInUser() 
   if (!user) return notFound()
 

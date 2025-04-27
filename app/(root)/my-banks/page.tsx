@@ -38,7 +38,7 @@ const BankPage = () => {
 
   return (
     <div className="p-4">
-   <HeaderBox title='Manage your bank accounts' type='title' subtext='Access, manage your accounts and transaction effeciently' user={user as User}/>
+   <HeaderBox title='Manage your accounts' type='title' subtext='Access, manage your accounts ' user={user as User}/>
    <h1 className="text-2xl font-bold mt-6 ">Bank Accounts</h1>
    <div className="flex flex-wrap gap-6 mt-4">
       {accounts.map((account) => (

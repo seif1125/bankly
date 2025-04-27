@@ -6,16 +6,16 @@ import {
   updateUserBankAddress,
 } from '@/lib/actions/users.actions';
 import { BankCardActionsProps } from '@/types';
+import { useRouter } from 'next/navigation'; 
 
-const BankCardActions = ({ initialAccount, initialUser,onUserUpdate}:BankCardActionsProps) => {
+const BankCardActions = ({ initialAccount, initialUser, onUserUpdate }: BankCardActionsProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedAddress, setEditedAddress] = useState(initialAccount.banklyAddress);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(initialUser);
+  // const [isDefault, setIsDefault] = useState(user?.defaultAccountId === initialAccount.accountId);
 
-  const [isDefault,setIsDefault] = useState(user?.defaultAccountId === initialAccount.accountId);
-
-
+  const router = useRouter(); 
 
   const handleEditToggle = async () => {
     if (isEditing) {
@@ -25,8 +25,7 @@ const BankCardActions = ({ initialAccount, initialUser,onUserUpdate}:BankCardAct
           accountId: initialAccount.$id,
           newAddress: editedAddress,
         });
-        await onUserUpdate()
-    
+        await onUserUpdate();
       } catch (err) {
         console.error('Error updating address:', err);
       } finally {
@@ -39,18 +38,15 @@ const BankCardActions = ({ initialAccount, initialUser,onUserUpdate}:BankCardAct
   const handleDelete = async (accountId: string) => {
     try {
       await deleteUserBankAccount(accountId);
-      await onUserUpdate()
-  
+      await onUserUpdate();
     } catch (err) {
       console.error('Error deleting account:', err);
     }
   };
 
   const handleSendMoney = (accountId: string) => {
-  
+    router.push(`/payment-transfer/${accountId}`); // router.push is now correct
   };
-
- 
 
   return (
     <div className="flex items-center justify-between mt-2 px-2 text-sm w-full">
@@ -98,8 +94,6 @@ const BankCardActions = ({ initialAccount, initialUser,onUserUpdate}:BankCardAct
             className="hover:scale-110 transition"
           />
         </button>
-
-       
       </div>
     </div>
   );

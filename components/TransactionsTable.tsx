@@ -29,7 +29,7 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
   <>
  
     <TabsContent className="min-h-[300px] w-full" value={account.accountId}>
-    <div className="flex flex-col gap-4 mt-4 w-full bg-bankGradient bg-opacity-25 p-4 rounded-md  ">
+    <div className="flex flex-col gap-4 mt-16 md:mt-4 w-full bg-bankGradient bg-opacity-25 p-4 rounded-md  ">
              <div className="flex items-center justify-between">
                 <h1 className="text-black-1">{account.accountName}</h1>
                 <h1 className="p-2 rounded-full bg-gray-200 text-14 font-inter text-[#344054]">{account.type}</h1>
@@ -46,11 +46,11 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
         <Table>
           <TableHeader>
             <TableRow className="text-xs text-[#475467] font-medium">
-              <TableHead className="w-[125px]">Name</TableHead>
-              <TableHead className="px-2 min-w-[80px]">Amount</TableHead>
-              <TableHead className="px-2 min-w-[120px]">Status</TableHead>
-              <TableHead className="px-2 hidden lg:flex items-center  align-middle  h-10 text-left  min-w-[120px]">Date</TableHead>
-              <TableHead className="px-2 w-[90px]">Category</TableHead>
+              <TableHead className="w-[80px]">Name</TableHead>
+              <TableHead className="px-2 min-w-[40px]">Amount</TableHead>
+              <TableHead className="px-2 min-w-[40px] w-[40px]">Status</TableHead>
+              <TableHead className="px-2 hidden lg:flex items-center  align-middle  h-10 text-left  min-w-[80px]">Date</TableHead>
+              <TableHead className="px-2 w-[90px] hidden lg:table-cell">Category</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -63,7 +63,7 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
                 <TableRow className={tx.pending?'bg-pink-25':'bg-success-25'+' my-4 '} key={tx.transaction_id}>
                   <TableCell className="font-medium ">
                     
-                    <div className="flex items-center gap-3 w-28">
+                    <div className="flex items-center gap-3 w-[150px] lg:w-[120px] ">
                       <img src={tx.logo_url?tx.logo_url:'/icons/logo.svg'} alt={tx.merchantName} width={25} height={25} className="rounded-[24px]" />
                     <h1 className="text-xs font-inter text-[#344054] truncate font-semibold">
                     {tx.merchantName.replaceAll('*', "").replaceAll('//', "")}
@@ -75,7 +75,7 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
     ? (tx.senderAccountId === account.accountId ? 'text-red-600' : 'text-success-600') 
     : (tx.amount < 0 ? 'text-red-600' : 'text-success-600')
   ),
-  'font-inter text-sm font-semibold'
+  'font-inter text-sm font-semibold min-w-[40px] w-[80px]'
 )}>
   {tx.banklyTransfer ? (
     tx.senderAccountId === account.accountId
@@ -87,15 +87,15 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
       : `+$ ${tx.amount.toFixed(2)}`
   )}
 </TableCell>
-                  <TableCell className='font-inter text-xs font-semibold flex items-center mt-2'>
+                  <TableCell className='font-inter text-xs font-semibold flex items-center mt-2 min-w-[40px] w-[120px]'>
                     <span className={cn(tx.pending?'text-red-600 border border-red-600':'text-success-600 border border-success-600','py-1 px-2 rounded-full')}>
                     {tx.pending ? "• declined" : "• successful"}
                     </span>
                     </TableCell>
-                  <TableCell className="max-lg:hidden text-[#475467] text-xs ">{formatDate(tx.authorizedDate)}</TableCell>
-                  <TableCell className="text-left w-[90px]">
-                    <span className={`hidden lg:inline-flex gap-2 py-1 px-3 rounded-full text-xs truncate font-medium border-2 ${color} ${borderColor}`}>
-                      {Icon && <Icon className="w-4 h-4" />}
+                  <TableCell className="max-lg:hidden text-[#475467] text-xs min-w-[40px] w-[120px]">{formatDate(tx.authorizedDate)}</TableCell>
+                  <TableCell className="text-left w-[90px] lg:table-cell hidden">
+                    <span className={`hidden lg:inline-flex gap-2 py-1 px-1 rounded-full text-xs truncate font-medium border-2 ${color} ${borderColor}`}>
+                    {Icon && <img src={Icon} alt="category icon" className="w-4 h-4" />}
                       {category.indexOf(" ")<0?category:(category.slice(0, category.indexOf(" "))+'...')}
                     </span>
                   </TableCell>
@@ -119,11 +119,11 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
    <Table>
           <TableHeader>
             <TableRow className="text-xs text-[#475467] font-medium">
-              <TableHead className="w-[175px]">Name</TableHead>
+              <TableHead className="lg:w-[175px]">Name</TableHead>
               <TableHead className="px-2 min-w-[80px]">Amount</TableHead>
               <TableHead className="px-2 min-w-[120px]">Status</TableHead>
               <TableHead className="px-2 hidden lg:flex items-center  align-middle  h-10 text-left  min-w-[120px]">Date</TableHead>
-              <TableHead className="px-2 w-[90px]">Category</TableHead>
+              <TableHead className="px-2 w-[190px] hidden lg:table-cell">Category</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -136,7 +136,7 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
                 <TableRow className={tx.pending?'bg-pink-25':'bg-success-25'+' my-4 '} key={tx.transaction_id}>
                   <TableCell className="font-medium ">
                     
-                    <div className="flex items-center gap-3 w-[175px]">
+                    <div className="flex items-center gap-3 w-[125px] md:w-[175px]">
                       <img src={tx.logo_url?tx.logo_url:'/icons/logo.svg'} alt={tx.merchantName} width={25} height={25} className="rounded-[24px]" />
                     <h1 className="text-xs font-inter text-[#344054] font-semibold">
                     {tx.merchantName.replaceAll('*', "").replaceAll('//', "")}
@@ -166,9 +166,9 @@ const TransactionsTable = ({ account, transactions , isMainPage}: TransactionTab
                     </span>
                     </TableCell>
                   <TableCell className="max-lg:hidden text-[#475467] text-xs ">{formatDate(tx.authorizedDate)}</TableCell>
-                  <TableCell className="text-left w-[90px]">
-                    <span className={`hidden lg:inline-flex gap-2 py-1 px-3 rounded-full text-xs truncate font-medium border-2 ${color} ${borderColor}`}>
-                      {Icon && <Icon className="w-4 h-4" />}
+                  <TableCell className="text-left w-[190px] hidden lg:table-cell">
+                    <span className={`hidden lg:inline-flex gap-2 py-1 px-1 rounded-full text-xs truncate font-medium border-2 ${color} ${borderColor}`}>
+                    {Icon && <img src={Icon} alt="category icon" className="w-3 h-3" />}
                       {category}
                     </span>
                   </TableCell>
