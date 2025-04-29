@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🏦 Bankly - Modern Banking App Integration
 
-## Getting Started
+Bankly is a **full-stack modern banking platform** that integrates **Plaid**, **Appwrite**, and **Next.js** to allow users to link bank accounts, view transactions, and send money securely using a unique **Bankly Address** system. 🔥
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **User Authentication** (Sign up, Sign in, Logout) using Appwrite
+- **Plaid Integration** for:
+  - Linking bank accounts securely
+  - Fetching live account balances
+  - Fetching real bank transactions
+- **Custom Bankly Address System** (`username@bankly.com`) for easy fund transfers
+- **Secure Money Transfers** between linked accounts
+- **Fake Card Generator** for a safe card number UI
+- **View Transaction History** (both sent and received)
+- **Real-Time Bank Account Management**
+- **Error Handling** for seamless user experience
+- **Session Management** with secure cookies
+- **Admin SDK and Server Actions** powered by Next.js 14+
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+----
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## 🛠️ Built With
 
-## Learn More
+- [Next.js 14](https://nextjs.org/)
+- [Appwrite](https://appwrite.io/)
+- [Plaid API](https://plaid.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Zod Validation](https://zod.dev/)
+- [Shadcn UI](https://ui.shadcn.dev/)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📸 Screenshots
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### 🔐 Authentication Pages
+Sign Up <img width="960" alt="signup" src="https://github.com/user-attachments/assets/e35b32c6-6469-4139-b6ba-746abdafc46e" />
+Sign In page<img width="960" alt="signin" src="https://github.com/user-attachments/assets/ce9138bf-992b-4b3f-8113-1443495229c9" />
 
-## Deploy on Vercel
+### 🏦 Bank Linking with Plaid
+<img width="960" alt="plaidlink" src="https://github.com/user-attachments/assets/2a531131-28ab-4896-8f79-eebc368087bd" />
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🧾 Transactions History
+<img width="960" alt="transaction" src="https://github.com/user-attachments/assets/86341d9c-96da-41e6-952c-a44150b0b42f" />
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### 💸 Send Money via Bankly Address
+<img width="960" alt="transfer" src="https://github.com/user-attachments/assets/87a008ac-c38a-4e36-be51-b5009ddae72a" />
+
+
